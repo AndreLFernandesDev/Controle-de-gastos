@@ -11,8 +11,8 @@ class Financas
         decimal salario = ObterSalario();
         Console.WriteLine("Digite sua meta de gastos:");
         decimal meta = ObterMeta();
-        Usuario novoUsuario = new Usuario(nome, salario, meta);
-        Usuario novoUsuario2 = new Usuario("maycon", 1000, 500);
+        Usuario novoUsuario = new(nome, salario, meta);
+        Usuario novoUsuario2 = new("maycon", 1000, 500);
 
         //Adicionar despesas
         Console.WriteLine("Digite o nome da despesa:");
@@ -37,9 +37,9 @@ class Financas
         Console.WriteLine("9-Beleza");
         Console.WriteLine("10- Outros");
         Despesa.CategoriaDespesa categoria = ObterCategoria();
-        Despesa novaDespesa = new Despesa(nomeDespesa, valorDespesa, dataDespesa, situacao, categoria);
+        Despesa novaDespesa = new(nomeDespesa, valorDespesa, dataDespesa, situacao, categoria);
         novoUsuario.Despesas.Add(novaDespesa);
-        Despesa novaDespesa2 = new Despesa("aluguel", 50, dataDespesa, situacao, categoria);
+        Despesa novaDespesa2 = new("aluguel", 50, dataDespesa, situacao, categoria);
         novoUsuario.Despesas.Add(novaDespesa2);
 
         //Adicionar receita
@@ -57,9 +57,9 @@ class Financas
         Console.WriteLine("5- Salário");
         Console.WriteLine("6- Outros");
         Receita.CategoriaReceita categoriaReceita = ObterCategoriaReceita();
-        Receita novaReceita = new Receita(nomeReceita, valorReceita, dataReceita, categoriaReceita);
+        Receita novaReceita = new(nomeReceita, valorReceita, dataReceita, categoriaReceita);
         novoUsuario.Receitas.Add(novaReceita);
-        Receita novaReceita2 = new Receita("presentes", 10, dataReceita, categoriaReceita);
+        Receita novaReceita2 = new("presentes", 10, dataReceita, categoriaReceita);
         novoUsuario.Receitas.Add(novaReceita2);
 
         Console.WriteLine(novoUsuario.NomeUsuario);
@@ -130,7 +130,7 @@ class Financas
     {
         //string dataDespesa = Console.ReadLine();
         string dataDespesa = "05/08/2023";
-        CultureInfo provider = new CultureInfo("pt-BR");
+        CultureInfo provider = new("pt-BR");
         DateTime data = DateTime.Parse(dataDespesa, provider);
         return data;
     }
@@ -157,7 +157,7 @@ class Financas
     {
         //string dataReceita = Console.ReadLine();
         string dataReceita = "25/07/2023";
-        CultureInfo provider = new CultureInfo("pt-BR");
+        CultureInfo provider = new("pt-BR");
         DateTime data = DateTime.Parse(dataReceita, provider);
         return data;
     }
