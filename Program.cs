@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics.Metrics;
+using System.Globalization;
 using Dominios;
 
 class Financas
@@ -28,17 +29,26 @@ class Financas
             switch (escolha)
             {
                 case "1":
-
+                    Console.WriteLine("LISTA DE DESPESAS");
+                    Console.WriteLine("-----------------");
                     for (int i = 0; i < novoUsuario.Despesas.Count; i++)
                     {
-                        Console.WriteLine("LISTA DE DESPESAS");
-                        Console.WriteLine("-----------------");
+                        Despesa x = novoUsuario.Despesas[i];
+                        int pos = i + 1;
+                        Console.WriteLine("{0}-Nome: {1} | Valor:{2} | Data: {3} | Categoria: {4} | Situação: {5}",
+                        pos, x.NomeDespesa, x.ValorDespesa, x.DataDespesa, x.Categoria, x.SituacaoDespesa);
                     }
                     break;
                 case "2":
                     Console.WriteLine("LISTA DE RECEITAS");
                     Console.WriteLine("-----------------");
+                    for (int i = 0; i < novoUsuario.Despesas.Count; i++)
+                    {
+                        Receita x = novoUsuario.Receitas[i];
+                        Console.WriteLine("Nome: {0} | Valor:{1} | Data: {2} | Categoria: {3} | Situação: {4}",
+                        x.NomeReceita, x.ValorReceita, x.DataReceita, x.Categoria, x.SituacaoReceita);
 
+                    }
                     break;
                 case "3":
 
@@ -78,6 +88,10 @@ class Financas
                     decimal valorReceita = ObterValorReceita();
                     Console.WriteLine("Digite a data do recebimento do valor:");
                     DateTime dataReceita = ObterDataReceita();
+                    Console.WriteLine("Digite o número referente a situaçãp da receita:");
+                    Console.WriteLine("1- Recebida");
+                    Console.WriteLine("2- Não recebida");
+                    string situacaoRec = ObterSituacaoReceita();
                     Console.WriteLine("Digite o número correspondente a categoria da receita:");
                     Console.WriteLine("1- Presentes");
                     Console.WriteLine("2- Prêmios");
@@ -86,7 +100,7 @@ class Financas
                     Console.WriteLine("5- Salário");
                     Console.WriteLine("6- Outros");
                     Receita.CategoriaReceita categoriaReceita = ObterCategoriaReceita();
-                    Receita novaReceita = new(nomeReceita, valorReceita, dataReceita, categoriaReceita);
+                    Receita novaReceita = new(nomeReceita, valorReceita, dataReceita, categoriaReceita, situacaoRec);
                     novoUsuario.Receitas.Add(novaReceita);
                     break;
 
@@ -96,72 +110,62 @@ class Financas
     }
     public static string ObterNome()
     {
-        string nome = "andre";
+        string nome = Console.ReadLine();
         return nome;
     }
     public static decimal ObterSalario()
     {
-        //decimal salario = Convert.ToDecimal(Console.ReadLine());
-        decimal salario = 2000;
+        decimal salario = Convert.ToDecimal(Console.ReadLine());
         return salario;
     }
     public static decimal ObterMeta()
     {
-        //decimal meta = Convert.ToDecimal(Console.ReadLine());
-        decimal meta = 90;
+        decimal meta = Convert.ToDecimal(Console.ReadLine());
         return meta;
     }
     public static string ObterNomeDespesa()
     {
-        //string nome = Console.ReadLine();
-        string nome = "internet";
+        string nome = Console.ReadLine();
         return nome;
     }
     public static decimal ObterValorDespesa()
     {
-        //decimal valor = Convert.ToDecimal(Console.ReadLine());
-        decimal valor = 50;
+        decimal valor = Convert.ToDecimal(Console.ReadLine());
         return valor;
     }
     public static DateTime ObterDataDespesa()
     {
-        //string dataDespesa = Console.ReadLine();
-        string dataDespesa = "05/08/2023";
+        string dataDespesa = Console.ReadLine();
         CultureInfo provider = new("pt-BR");
         DateTime data = DateTime.Parse(dataDespesa, provider);
         return data;
     }
     public static Despesa.CategoriaDespesa ObterCategoria()
     {
-        //int categoria = Convert.ToInt32(Console.ReadLine());
-        int categoria = 7;
+        int categoria = Convert.ToInt32(Console.ReadLine());
         return (Despesa.CategoriaDespesa)categoria;
 
     }
     public static string ObterNomeReceita()
     {
-        //string nome = Console.ReadLine();
-        string nome = "bonus";
+        string nome = Console.ReadLine();
         return nome;
     }
     public static decimal ObterValorReceita()
     {
-        //decimal valor = Convert.ToInt32(Console.ReadLine());
-        decimal valor = 100;
+        decimal valor = Convert.ToInt32(Console.ReadLine());
         return valor;
     }
     public static DateTime ObterDataReceita()
     {
-        //string dataReceita = Console.ReadLine();
-        string dataReceita = "25/07/2023";
+        string dataReceita = Console.ReadLine();
         CultureInfo provider = new("pt-BR");
         DateTime data = DateTime.Parse(dataReceita, provider);
         return data;
     }
     public static Receita.CategoriaReceita ObterCategoriaReceita()
     {
-        //int categoria = Convert.ToInt32(Console.ReadLine());
-        int categoria = 2;
+        int categoria = Convert.ToInt32(Console.ReadLine());
         return (Receita.CategoriaReceita)categoria;
 
     }
@@ -234,6 +238,17 @@ class Financas
             retorno = "Paga";
         }
         else { retorno = "Não paga"; }
+        return retorno;
+    }
+    public static string ObterSituacaoReceita()
+    {
+        int situacaoReceita = Convert.ToInt32(Console.ReadLine());
+        string retorno;
+        if (situacaoReceita == 1)
+        {
+            retorno = "Recebida";
+        }
+        else { retorno = "Não recebida"; }
         return retorno;
     }
 }

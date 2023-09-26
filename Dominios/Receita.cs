@@ -6,13 +6,16 @@ namespace Dominios
         public decimal ValorReceita { get; set; }
         public DateTime DataReceita { get; set; }
         public CategoriaReceita Categoria { get; set; }
+        public string SituacaoReceita { get; set; }
         public enum CategoriaReceita { Presentes = 1, Prêmios, Reembolso, Rendimentos, Salário, Outros };
-        public Receita(string nomeReceita, decimal valorReceita, DateTime dataReceita, CategoriaReceita categoriaReceita)
+        public Receita(string nomeReceita, decimal valorReceita, DateTime dataReceita, CategoriaReceita categoriaReceita, string situacaoReceita)
         {
             this.NomeReceita = nomeReceita;
             this.ValorReceita = valorReceita;
             this.DataReceita = dataReceita;
+            this.SituacaoReceita = situacaoReceita;
             this.Categoria = categoriaReceita;
+
         }
 
 
