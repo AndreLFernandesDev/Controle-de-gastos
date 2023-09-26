@@ -5,6 +5,7 @@ class Financas
 {
     private static void Main()
     {
+
         Console.WriteLine("Digite seu nome:");
         string nome = ObterNome();
         Console.WriteLine("Digite o valor do seu salário:");
@@ -12,89 +13,85 @@ class Financas
         Console.WriteLine("Digite sua meta de gastos:");
         decimal meta = ObterMeta();
         Usuario novoUsuario = new(nome, salario, meta);
-        Usuario novoUsuario2 = new("maycon", 1000, 500);
+        string escolha;
+        do
+        {
+            Console.WriteLine("Digite o número correspondente ao que deseja executar:");
+            Console.WriteLine("------------------------------------------------------");
+            Console.WriteLine("1- Imprimir lista de despesas");
+            Console.WriteLine("2- Imprimir lista de receitas");
+            Console.WriteLine("3- Adicionar despesa");
+            Console.WriteLine("4- Adicionar receita");
+            Console.WriteLine("5- Divisão de gastos");
+            Console.WriteLine("0- Sair");
+            escolha = Console.ReadLine();
+            switch (escolha)
+            {
+                case "1":
 
-        //Adicionar despesas
-        Console.WriteLine("Digite o nome da despesa:");
-        string nomeDespesa = ObterNomeDespesa();
-        Console.WriteLine("Digite o valor da despesa:");
-        decimal valorDespesa = ObterValorDespesa();
-        Console.WriteLine("Digite a data de vencimento da despesa:");
-        DateTime dataDespesa = ObterDataDespesa();
-        Console.WriteLine("Digite o número referente a situaçao da despesa: ");
-        Console.WriteLine("1- Paga");
-        Console.WriteLine("2-Não paga");
-        string situacao = ObterSituacaoDespesa();
-        Console.WriteLine("Digite o número correspondente a categoria da despesa:");
-        Console.WriteLine("1- Lazer");
-        Console.WriteLine("2- Transporte");
-        Console.WriteLine("3- Moradia");
-        Console.WriteLine("4- Saúde");
-        Console.WriteLine("5- Internet");
-        Console.WriteLine("6- Academia");
-        Console.WriteLine("7- Telefone");
-        Console.WriteLine("8-Supermercado");
-        Console.WriteLine("9-Beleza");
-        Console.WriteLine("10- Outros");
-        Despesa.CategoriaDespesa categoria = ObterCategoria();
-        Despesa novaDespesa = new(nomeDespesa, valorDespesa, dataDespesa, situacao, categoria);
-        novoUsuario.Despesas.Add(novaDespesa);
-        Despesa novaDespesa2 = new("aluguel", 50, dataDespesa, situacao, categoria);
-        novoUsuario.Despesas.Add(novaDespesa2);
+                    for (int i = 0; i < novoUsuario.Despesas.Count; i++)
+                    {
+                        Console.WriteLine("LISTA DE DESPESAS");
+                        Console.WriteLine("-----------------");
+                    }
+                    break;
+                case "2":
+                    Console.WriteLine("LISTA DE RECEITAS");
+                    Console.WriteLine("-----------------");
 
-        //Adicionar receita
-        Console.WriteLine("Digite o nome da receita:");
-        string nomeReceita = ObterNomeReceita();
-        Console.WriteLine("Digite o valor da receita:");
-        decimal valorReceita = ObterValorReceita();
-        Console.WriteLine("Digite a data do recebimento do valor:");
-        DateTime dataReceita = ObterDataReceita();
-        Console.WriteLine("Digite o número correspondente a categoria da receita:");
-        Console.WriteLine("1- Presentes");
-        Console.WriteLine("2- Prêmios");
-        Console.WriteLine("3- Reembolso");
-        Console.WriteLine("4- Rendimentos");
-        Console.WriteLine("5- Salário");
-        Console.WriteLine("6- Outros");
-        Receita.CategoriaReceita categoriaReceita = ObterCategoriaReceita();
-        Receita novaReceita = new(nomeReceita, valorReceita, dataReceita, categoriaReceita);
-        novoUsuario.Receitas.Add(novaReceita);
-        Receita novaReceita2 = new("presentes", 10, dataReceita, categoriaReceita);
-        novoUsuario.Receitas.Add(novaReceita2);
-
-        Console.WriteLine(novoUsuario.NomeUsuario);
-        Console.WriteLine(novoUsuario.ValorSalario);
-        Console.WriteLine(novoUsuario.MetaGastos);
-        Console.WriteLine(novaDespesa.NomeDespesa);
-        Console.WriteLine(novaDespesa.ValorDespesa);
-        Console.WriteLine(novaDespesa.DataDespesa);
-        Console.WriteLine(novaDespesa.Categoria);
-
-        Console.WriteLine(novaReceita.NomeReceita);
-        Console.WriteLine(novaReceita.ValorReceita);
-        Console.WriteLine(novaReceita.DataReceita);
-        Console.WriteLine(novaReceita.Categoria);
-
-        Console.WriteLine(novoUsuario2.NomeUsuario);
-        Console.WriteLine(novoUsuario2.ValorSalario);
-        Console.WriteLine(novoUsuario2.MetaGastos);
-        Console.WriteLine(novaDespesa2.NomeDespesa);
-        Console.WriteLine(novaDespesa2.ValorDespesa);
-        Console.WriteLine(novaDespesa2.DataDespesa);
-        Console.WriteLine(novaDespesa2.Categoria);
-
-        Console.WriteLine(novaReceita2.NomeReceita);
-        Console.WriteLine(novaReceita2.ValorReceita);
-        Console.WriteLine(novaReceita2.DataReceita);
-        Console.WriteLine(novaReceita2.Categoria);
-        Console.WriteLine("O valor total das despesas é {0}", TotalDespesas(novoUsuario));
-        Console.WriteLine("O valor total das receitas é {0}", TotalReceitas(novoUsuario));
-        Console.WriteLine("O valor restante é de: {0}", Restante(novoUsuario));
-        Console.WriteLine("Situação da sua meta de gastos:" + MetaSituation(novoUsuario));
-        Console.WriteLine("Situacão da despesa:" + situacao);
-        Console.WriteLine("Categoria da despesa:" + ExibirCategoria(novoUsuario, nome));
+                    break;
+                case "3":
 
 
+                    //Adicionar despesa
+                    Console.WriteLine("Digite o nome da despesa:");
+                    string nomeDespesa = ObterNomeDespesa();
+                    Console.WriteLine("Digite o valor da despesa:");
+                    decimal valorDespesa = ObterValorDespesa();
+                    Console.WriteLine("Digite a data de vencimento da despesa:");
+                    DateTime dataDespesa = ObterDataDespesa();
+                    Console.WriteLine("Digite o número referente a situaçao da despesa: ");
+                    Console.WriteLine("1- Paga");
+                    Console.WriteLine("2-Não paga");
+                    string situacao = ObterSituacaoDespesa();
+                    Console.WriteLine("Digite o número correspondente a categoria da despesa:");
+                    Console.WriteLine("1- Lazer");
+                    Console.WriteLine("2- Transporte");
+                    Console.WriteLine("3- Moradia");
+                    Console.WriteLine("4- Saúde");
+                    Console.WriteLine("5- Internet");
+                    Console.WriteLine("6- Academia");
+                    Console.WriteLine("7- Telefone");
+                    Console.WriteLine("8-Supermercado");
+                    Console.WriteLine("9-Beleza");
+                    Console.WriteLine("10- Outros");
+                    Despesa.CategoriaDespesa categoria = ObterCategoria();
+                    Despesa novaDespesa = new(nomeDespesa, valorDespesa, dataDespesa, situacao, categoria);
+                    novoUsuario.Despesas.Add(novaDespesa);
+                    break;
+                case "4":
+
+                    //Adicionar receita
+                    Console.WriteLine("Digite o nome da receita:");
+                    string nomeReceita = ObterNomeReceita();
+                    Console.WriteLine("Digite o valor da receita:");
+                    decimal valorReceita = ObterValorReceita();
+                    Console.WriteLine("Digite a data do recebimento do valor:");
+                    DateTime dataReceita = ObterDataReceita();
+                    Console.WriteLine("Digite o número correspondente a categoria da receita:");
+                    Console.WriteLine("1- Presentes");
+                    Console.WriteLine("2- Prêmios");
+                    Console.WriteLine("3- Reembolso");
+                    Console.WriteLine("4- Rendimentos");
+                    Console.WriteLine("5- Salário");
+                    Console.WriteLine("6- Outros");
+                    Receita.CategoriaReceita categoriaReceita = ObterCategoriaReceita();
+                    Receita novaReceita = new(nomeReceita, valorReceita, dataReceita, categoriaReceita);
+                    novoUsuario.Receitas.Add(novaReceita);
+                    break;
+
+            }
+        } while (escolha != "0");
 
     }
     public static string ObterNome()
