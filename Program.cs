@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.Metrics;
+﻿using System.Collections;
 using System.Globalization;
 using Dominios;
 
@@ -23,7 +23,9 @@ class Financas
             Console.WriteLine("2- Imprimir lista de receitas");
             Console.WriteLine("3- Adicionar despesa");
             Console.WriteLine("4- Adicionar receita");
-            Console.WriteLine("5- Divisão de gastos");
+            Console.WriteLine("5- Total de gastos");
+            Console.WriteLine("6- Remover despesa");
+            Console.WriteLine("7- Remover receita");
             Console.WriteLine("0- Sair");
             escolha = Console.ReadLine();
             switch (escolha)
@@ -31,24 +33,35 @@ class Financas
                 case "1":
                     Console.WriteLine("LISTA DE DESPESAS");
                     Console.WriteLine("-----------------");
+                    if (novoUsuario.Despesas.Count == 0)
+                    {
+                        Console.WriteLine("vazia");
+                    }
                     for (int i = 0; i < novoUsuario.Despesas.Count; i++)
                     {
                         Despesa x = novoUsuario.Despesas[i];
                         int pos = i + 1;
-                        Console.WriteLine("{0}-Nome: {1} | Valor:{2} | Data: {3} | Categoria: {4} | Situação: {5}",
+                        Console.WriteLine("{0}-Nome: {1} | Valor:R$ {2} | Data: {3} | Categoria: {4} | Situação: {5}",
                         pos, x.NomeDespesa, x.ValorDespesa, x.DataDespesa, x.Categoria, x.SituacaoDespesa);
                     }
+                    Console.WriteLine("");
                     break;
                 case "2":
                     Console.WriteLine("LISTA DE RECEITAS");
                     Console.WriteLine("-----------------");
+                    if (novoUsuario.Receitas.Count == 0)
+                    {
+                        Console.WriteLine("vazia");
+                    }
                     for (int i = 0; i < novoUsuario.Despesas.Count; i++)
                     {
                         Receita x = novoUsuario.Receitas[i];
-                        Console.WriteLine("Nome: {0} | Valor:{1} | Data: {2} | Categoria: {3} | Situação: {4}",
-                        x.NomeReceita, x.ValorReceita, x.DataReceita, x.Categoria, x.SituacaoReceita);
+                        int pos = i + 1;
+                        Console.WriteLine("{0}-Nome: {1} | Valor:R$ {2} | Data: {3} | Categoria: {4} | Situação: {5}",
+                        pos, x.NomeReceita, x.ValorReceita, x.DataReceita, x.Categoria, x.SituacaoReceita);
 
                     }
+                    Console.WriteLine("");
                     break;
                 case "3":
 
@@ -78,6 +91,7 @@ class Financas
                     Despesa.CategoriaDespesa categoria = ObterCategoria();
                     Despesa novaDespesa = new(nomeDespesa, valorDespesa, dataDespesa, situacao, categoria);
                     novoUsuario.Despesas.Add(novaDespesa);
+                    Console.WriteLine("");
                     break;
                 case "4":
 
@@ -102,6 +116,26 @@ class Financas
                     Receita.CategoriaReceita categoriaReceita = ObterCategoriaReceita();
                     Receita novaReceita = new(nomeReceita, valorReceita, dataReceita, categoriaReceita, situacaoRec);
                     novoUsuario.Receitas.Add(novaReceita);
+                    Console.WriteLine("");
+                    break;
+
+                case "5":
+                    Console.WriteLine("O valor total de gastos é  R$ {0}", TotalDespesas(novoUsuario));
+                    Console.WriteLine("O valor total de receitas é R$ {0}", TotalReceitas(novoUsuario));
+                    Console.WriteLine("Sua meta de gastos foi {0}", MetaSituation(novoUsuario, meta));
+                    Console.WriteLine("");
+                    break;
+
+                case "6":
+                    Console.WriteLine("Digite o número da despesa que deseja remover:");
+                    RemoverDespesa(novoUsuario);
+                    Console.WriteLine("");
+                    break;
+
+                case "7":
+                    Console.WriteLine("Digite o número da receita0 que deseja remover:");
+                    RemoverReceita(novoUsuario);
+                    Console.WriteLine("");
                     break;
 
             }
@@ -202,9 +236,8 @@ class Financas
         decimal restante = salario + receitas - despesas;
         return restante;
     }
-    public static string MetaSituation(Usuario novoUsuario)
+    public static string MetaSituation(Usuario novoUsuario, decimal meta)
     {
-        decimal meta = ObterMeta();
         decimal despesas = TotalDespesas(novoUsuario);
         string x;
         if (despesas < meta)
@@ -250,5 +283,19 @@ class Financas
         }
         else { retorno = "Não recebida"; }
         return retorno;
+    }
+    public static void RemoverDespesa(Usuario novoUsuario)
+    {
+        int pos = Convert.ToInt32(Console.ReadLine());
+        novoUsuario.Despesas.RemoveAt(pos - 1);
+        Console.WriteLine("Despesa removida!");
+
+    }
+    public static void RemoverReceita(Usuario novoUsuario)
+    {
+        int pos = Convert.ToInt32(Console.ReadLine());
+        novoUsuario.Receitas.RemoveAt(pos - 1);
+        Console.WriteLine("Receita removida!");
+
     }
 }
