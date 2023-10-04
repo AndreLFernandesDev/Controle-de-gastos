@@ -23,7 +23,7 @@ class Financas
             Console.WriteLine("2- Imprimir lista de receitas");
             Console.WriteLine("3- Adicionar despesa");
             Console.WriteLine("4- Adicionar receita");
-            Console.WriteLine("5- Total de gastos");
+            Console.WriteLine("5- Divisão de gastos");
             Console.WriteLine("6- Remover despesa");
             Console.WriteLine("7- Remover receita");
             Console.WriteLine("0- Sair");
@@ -53,7 +53,7 @@ class Financas
                     {
                         Console.WriteLine("vazia");
                     }
-                    for (int i = 0; i < novoUsuario.Despesas.Count; i++)
+                    for (int i = 0; i < novoUsuario.Receitas.Count; i++)
                     {
                         Receita x = novoUsuario.Receitas[i];
                         int pos = i + 1;
@@ -71,7 +71,7 @@ class Financas
                     string nomeDespesa = ObterNomeDespesa();
                     Console.WriteLine("Digite o valor da despesa:");
                     decimal valorDespesa = ObterValorDespesa();
-                    Console.WriteLine("Digite a data de vencimento da despesa:");
+                    Console.WriteLine("Digite a data de vencimento da despesa: dd/mm/aaaa");
                     DateTime dataDespesa = ObterDataDespesa();
                     Console.WriteLine("Digite o número referente a situaçao da despesa: ");
                     Console.WriteLine("1- Paga");
@@ -100,7 +100,7 @@ class Financas
                     string nomeReceita = ObterNomeReceita();
                     Console.WriteLine("Digite o valor da receita:");
                     decimal valorReceita = ObterValorReceita();
-                    Console.WriteLine("Digite a data do recebimento do valor:");
+                    Console.WriteLine("Digite a data do recebimento do valor: dd/mm/aaaa");
                     DateTime dataReceita = ObterDataReceita();
                     Console.WriteLine("Digite o número referente a situaçãp da receita:");
                     Console.WriteLine("1- Recebida");
@@ -120,9 +120,10 @@ class Financas
                     break;
 
                 case "5":
+                    DivisaoDespesas(novoUsuario);
                     Console.WriteLine("O valor total de gastos é  R$ {0}", TotalDespesas(novoUsuario));
                     Console.WriteLine("O valor total de receitas é R$ {0}", TotalReceitas(novoUsuario));
-                    Console.WriteLine("Sua meta de gastos foi {0}", MetaSituation(novoUsuario, meta));
+
                     Console.WriteLine("");
                     break;
 
@@ -297,5 +298,94 @@ class Financas
         novoUsuario.Receitas.RemoveAt(pos - 1);
         Console.WriteLine("Receita removida!");
 
+    }
+    public static void DivisaoDespesas(Usuario novoUsuario)
+    {
+        decimal somaLazer = 0;
+        decimal somaAcademia = 0;
+        decimal somaBeleza = 0;
+        decimal somaInternet = 0;
+        decimal somaMoradia = 0;
+        decimal somaSaude = 0;
+        decimal somaSupermercado = 0;
+        decimal somaTransporte = 0;
+        decimal somaOutros = 0;
+        decimal somaTelefone = 0;
+
+        for (int i = 0; i < novoUsuario.Despesas.Count; i++)
+        {
+            if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Lazer)
+            {
+                decimal valor = novoUsuario.Despesas[i].ValorDespesa;
+                somaLazer += valor;
+            }
+
+            else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Academia)
+            {
+                decimal valor = novoUsuario.Despesas[i].ValorDespesa;
+                somaAcademia += valor;
+            }
+            else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Beleza)
+            {
+                decimal valor = novoUsuario.Despesas[i].ValorDespesa;
+                somaBeleza += valor;
+            }
+            else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Internet)
+            {
+                decimal valor = novoUsuario.Despesas[i].ValorDespesa;
+                somaInternet += valor;
+            }
+            else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Moradia)
+            {
+                decimal valor = novoUsuario.Despesas[i].ValorDespesa;
+                somaMoradia += valor;
+            }
+            else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Saúde)
+            {
+                decimal valor = novoUsuario.Despesas[i].ValorDespesa;
+                somaSaude += valor;
+            }
+            else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Supermercado)
+            {
+                decimal valor = novoUsuario.Despesas[i].ValorDespesa;
+                somaSupermercado += valor;
+
+            }
+            else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Transporte)
+            {
+                decimal valor = novoUsuario.Despesas[i].ValorDespesa;
+                somaTransporte += valor;
+            }
+            else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Outros)
+            {
+                decimal valor = novoUsuario.Despesas[i].ValorDespesa;
+                somaOutros += valor;
+            }
+            else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Telefone)
+            {
+                decimal valor = novoUsuario.Despesas[i].ValorDespesa;
+                somaTelefone += valor;
+            }
+            Console.WriteLine("DIVISÃO DESPESAS (%)");
+            Console.WriteLine("____________________");
+            Console.WriteLine("Lazer-{0} %", somaLazer / TotalDespesas(novoUsuario) * 100);
+            Console.WriteLine("Academia-{0} %", somaAcademia / TotalDespesas(novoUsuario) * 100);
+            Console.WriteLine("Beleza-{0} %", somaBeleza / TotalDespesas(novoUsuario) * 100);
+            Console.WriteLine("Internet-{0} %", somaInternet / TotalDespesas(novoUsuario) * 100);
+            Console.WriteLine("Moradia-{0} %", somaMoradia / TotalDespesas(novoUsuario) * 100);
+            Console.WriteLine("Saúde-{0} %", somaSaude / TotalDespesas(novoUsuario) * 100);
+            Console.WriteLine("Supermercado-{0} %", somaSupermercado / TotalDespesas(novoUsuario) * 100);
+            Console.WriteLine("Transporte-{0} %", somaTransporte / TotalDespesas(novoUsuario) * 100);
+            Console.WriteLine("Telefone-{0} %", somaTelefone / TotalDespesas(novoUsuario) * 100);
+            Console.WriteLine("Outros-{0} %", somaOutros / TotalDespesas(novoUsuario) * 100);
+
+
+
+
+
+
+
+
+        }
     }
 }
