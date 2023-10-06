@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Globalization;
+using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 using Dominios;
 
 class Financas
@@ -23,7 +25,7 @@ class Financas
             Console.WriteLine("2- Imprimir lista de receitas");
             Console.WriteLine("3- Adicionar despesa");
             Console.WriteLine("4- Adicionar receita");
-            Console.WriteLine("5- Divisão de gastos");
+            Console.WriteLine("5- Divisão dos valores (%)");
             Console.WriteLine("6- Remover despesa");
             Console.WriteLine("7- Remover receita");
             Console.WriteLine("0- Sair");
@@ -378,14 +380,62 @@ class Financas
             Console.WriteLine("Transporte-{0} %", somaTransporte / TotalDespesas(novoUsuario) * 100);
             Console.WriteLine("Telefone-{0} %", somaTelefone / TotalDespesas(novoUsuario) * 100);
             Console.WriteLine("Outros-{0} %", somaOutros / TotalDespesas(novoUsuario) * 100);
+            Console.WriteLine("");
+        }
+    }
+    public static void DivisaoReceitas(Usuario novoUsuario)
+    {
+        decimal somaPresentes = 0;
+        decimal somaPremios = 0;
+        decimal somaReembolso = 0;
+        decimal somaRendimentos = 0;
+        decimal somaSalario = 0;
+        decimal somaOutros = 0;
 
 
+        for (int i = 0; i < novoUsuario.Receitas.Count; i++)
+        {
+            if (novoUsuario.Receitas[i].Categoria == Receita.CategoriaReceita.Presentes)
+            {
+                decimal valor = novoUsuario.Receitas[i].ValorReceita;
+                somaPresentes += valor;
+            }
 
+            else if (novoUsuario.Receitas[i].Categoria == Receita.CategoriaReceita.Prêmios)
+            {
+                decimal valor = novoUsuario.Receitas[i].ValorReceita;
+                somaPremios += valor;
+            }
+            else if (novoUsuario.Receitas[i].Categoria == Receita.CategoriaReceita.Reembolso)
+            {
+                decimal valor = novoUsuario.Receitas[i].ValorReceita;
+                somaReembolso += valor;
+            }
+            else if (novoUsuario.Receitas[i].Categoria == Receita.CategoriaReceita.Rendimentos)
+            {
+                decimal valor = novoUsuario.Receitas[i].ValorReceita;
+                somaRendimentos += valor;
+            }
+            else if (novoUsuario.Receitas[i].Categoria == Receita.CategoriaReceita.Salário)
+            {
+                decimal valor = novoUsuario.Receitas[i].ValorReceita;
+                somaSalario += valor;
+            }
+            else if (novoUsuario.Receitas[i].Categoria == Receita.CategoriaReceita.Outros)
+            {
+                decimal valor = novoUsuario.Receitas[i].ValorReceita;
+                somaOutros += valor;
+            }
 
-
-
-
-
+            Console.WriteLine("DIVISÃO RECEITAS (%)");
+            Console.WriteLine("____________________");
+            Console.WriteLine("Presentes-{0} %", somaPresentes / TotalReceitas(novoUsuario) * 100);
+            Console.WriteLine("Prêmios-{0} %", somaPremios / TotalReceitas(novoUsuario) * 100);
+            Console.WriteLine("Reembolso-{0} %", somaReembolso / TotalReceitas(novoUsuario) * 100);
+            Console.WriteLine("Rendimentos-{0} %", somaRendimentos / TotalReceitas(novoUsuario) * 100);
+            Console.WriteLine("Salário-{0} %", somaSalario / TotalReceitas(novoUsuario) * 100);
+            Console.WriteLine("Outros-{0} %", somaOutros / TotalReceitas(novoUsuario) * 100);
+            Console.WriteLine("");
         }
     }
 }
