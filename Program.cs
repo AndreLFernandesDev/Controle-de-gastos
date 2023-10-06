@@ -125,7 +125,8 @@ class Financas
                     DivisaoDespesas(novoUsuario);
                     Console.WriteLine("O valor total de gastos é  R$ {0}", TotalDespesas(novoUsuario));
                     Console.WriteLine("O valor total de receitas é R$ {0}", TotalReceitas(novoUsuario));
-
+                    Console.WriteLine("O saldo restante após a soma de todas as receitas e subtraindo as despesas é de: R${0}", Restante(novoUsuario, salario));
+                    Console.WriteLine("Sua meta de gastos foi: {0}", MetaSituation(novoUsuario, meta));
                     Console.WriteLine("");
                     break;
 
@@ -230,10 +231,8 @@ class Financas
         }
         return soma;
     }
-    public static decimal Restante(Usuario novoUsuario)
+    public static decimal Restante(Usuario novoUsuario, decimal salario)
     {
-
-        decimal salario = ObterSalario();
         decimal despesas = TotalDespesas(novoUsuario);
         decimal receitas = TotalReceitas(novoUsuario);
         decimal restante = salario + receitas - despesas;
