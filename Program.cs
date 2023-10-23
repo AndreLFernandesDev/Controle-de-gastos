@@ -1,22 +1,16 @@
-﻿using System.Collections;
-using System.Globalization;
-using System.Net.Sockets;
-using System.Security.Cryptography.X509Certificates;
+﻿using System.Globalization;
 using Dominios;
 
 class Financas
 {
     private static void Main()
     {
-
-        Console.WriteLine("Digite seu nome:");
         string nome = ObterNome();
-        Console.WriteLine("Digite o valor do seu salário:");
         decimal salario = ObterSalario();
-        Console.WriteLine("Digite sua meta de gastos:");
         decimal meta = ObterMeta();
+
         Usuario novoUsuario = new(nome, salario, meta);
-        string escolha;
+        string? escolha;
         do
         {
             Console.WriteLine("Digite o número correspondente ao que deseja executar:");
@@ -69,9 +63,7 @@ class Financas
 
 
                     //Adicionar despesa
-                    Console.WriteLine("Digite o nome da despesa:");
                     string nomeDespesa = ObterNomeDespesa();
-                    Console.WriteLine("Digite o valor da despesa:");
                     decimal valorDespesa = ObterValorDespesa();
                     Console.WriteLine("Digite a data de vencimento da despesa: dd/mm/aaaa");
                     DateTime dataDespesa = ObterDataDespesa();
@@ -98,9 +90,7 @@ class Financas
                 case "4":
 
                     //Adicionar receita
-                    Console.WriteLine("Digite o nome da receita:");
                     string nomeReceita = ObterNomeReceita();
-                    Console.WriteLine("Digite o valor da receita:");
                     decimal valorReceita = ObterValorReceita();
                     Console.WriteLine("Digite a data do recebimento do valor: dd/mm/aaaa");
                     DateTime dataReceita = ObterDataReceita();
@@ -148,27 +138,55 @@ class Financas
     }
     public static string ObterNome()
     {
-        string nome = Console.ReadLine();
+        string? nome;
+        do
+        {
+            Console.WriteLine("Digite seu nome:");
+            nome = Console.ReadLine();
+        } while (nome == null);
         return nome;
     }
     public static decimal ObterSalario()
     {
-        decimal salario = Convert.ToDecimal(Console.ReadLine());
+        bool? deuCerto;
+        decimal salario;
+        do
+        {
+            Console.WriteLine("Digite o valor do seu salário:");
+            deuCerto = decimal.TryParse(Console.ReadLine(), out salario);
+        } while (deuCerto == null);
         return salario;
     }
     public static decimal ObterMeta()
     {
-        decimal meta = Convert.ToDecimal(Console.ReadLine());
+        bool? deuCerto;
+        decimal meta;
+        do
+        {
+            Console.WriteLine("Digite sua meta de gastos:");
+            deuCerto = decimal.TryParse(Console.ReadLine(), out meta);
+        } while (deuCerto == null);
         return meta;
     }
     public static string ObterNomeDespesa()
     {
-        string nome = Console.ReadLine();
+        string? nome;
+        do
+        {
+            Console.WriteLine("Digite o nome da despesa:");
+            nome = Console.ReadLine();
+        } while (nome == null);
         return nome;
     }
     public static decimal ObterValorDespesa()
     {
-        decimal valor = Convert.ToDecimal(Console.ReadLine());
+        decimal valor;
+        bool? deuCerto;
+        do
+        {
+            Console.WriteLine("Digite o valor da despesa:");
+            deuCerto = decimal.TryParse(Console.ReadLine(), out valor);
+        } while (deuCerto == null);
         return valor;
     }
     public static DateTime ObterDataDespesa()
@@ -186,12 +204,23 @@ class Financas
     }
     public static string ObterNomeReceita()
     {
-        string nome = Console.ReadLine();
+        string? nome;
+        do
+        {
+            Console.WriteLine("Digite o nome da receita:");
+            nome = Console.ReadLine();
+        } while (nome == null);
         return nome;
     }
     public static decimal ObterValorReceita()
     {
-        decimal valor = Convert.ToInt32(Console.ReadLine());
+        decimal valor;
+        bool? deuCerto;
+        do
+        {
+            Console.WriteLine("Digite o valor da receita:");
+            deuCerto = decimal.TryParse(Console.ReadLine(), out valor);
+        } while (deuCerto == null);
         return valor;
     }
     public static DateTime ObterDataReceita()
