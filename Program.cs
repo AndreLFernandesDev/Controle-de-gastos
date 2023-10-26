@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using Dominios;
-
 class Financas
 {
     private static void Main()
@@ -37,7 +36,7 @@ class Financas
                     {
                         Despesa x = novoUsuario.Despesas[i];
                         int pos = i + 1;
-                        Console.WriteLine("{0}-Nome: {1} | Valor:R$ {2} | Data: {3} | Categoria: {4} | Situação: {5}",
+                        Console.WriteLine("{0}-Nome: {1} | Valor:R$ {2} | Data de vencimento: {3} | Categoria: {4} | Situação: {5}",
                         pos, x.NomeDespesa, x.ValorDespesa, x.DataDespesa, x.Categoria, x.SituacaoDespesa);
                     }
                     Console.WriteLine("");
@@ -53,7 +52,7 @@ class Financas
                     {
                         Receita x = novoUsuario.Receitas[i];
                         int pos = i + 1;
-                        Console.WriteLine("{0}-Nome: {1} | Valor:R$ {2} | Data: {3} | Categoria: {4} | Situação: {5}",
+                        Console.WriteLine("{0}-Nome: {1} | Valor:R$ {2} | Data recebimento: {3} | Categoria: {4} | Situação: {5}",
                         pos, x.NomeReceita, x.ValorReceita, x.DataReceita, x.Categoria, x.SituacaoReceita);
 
                     }
@@ -65,11 +64,7 @@ class Financas
                     //Adicionar despesa
                     string nomeDespesa = ObterNomeDespesa();
                     decimal valorDespesa = ObterValorDespesa();
-                    Console.WriteLine("Digite a data de vencimento da despesa: dd/mm/aaaa");
                     DateTime dataDespesa = ObterDataDespesa();
-                    Console.WriteLine("Digite o número referente a situaçao da despesa: ");
-                    Console.WriteLine("1- Paga");
-                    Console.WriteLine("2-Não paga");
                     string situacao = ObterSituacaoDespesa();
                     Console.WriteLine("Digite o número correspondente a categoria da despesa:");
                     Console.WriteLine("1- Lazer");
@@ -92,11 +87,7 @@ class Financas
                     //Adicionar receita
                     string nomeReceita = ObterNomeReceita();
                     decimal valorReceita = ObterValorReceita();
-                    Console.WriteLine("Digite a data do recebimento do valor: dd/mm/aaaa");
                     DateTime dataReceita = ObterDataReceita();
-                    Console.WriteLine("Digite o número referente a situaçãp da receita:");
-                    Console.WriteLine("1- Recebida");
-                    Console.WriteLine("2- Não recebida");
                     string situacaoRec = ObterSituacaoReceita();
                     Console.WriteLine("Digite o número correspondente a categoria da receita:");
                     Console.WriteLine("1- Presentes");
@@ -115,7 +106,7 @@ class Financas
                     DivisaoDespesas(novoUsuario);
                     Console.WriteLine("O valor total de gastos é  R$ {0}", TotalDespesas(novoUsuario));
                     Console.WriteLine("O valor total de receitas é R$ {0}", TotalReceitas(novoUsuario));
-                    Console.WriteLine("O saldo restante após a soma de todas as receitas e subtraindo as despesas é de: R${0}", Restante(novoUsuario, salario));
+                    Console.WriteLine("O saldo restante após a soma de todas as receitas e subtraido as despesas é de: R${0}", Restante(novoUsuario, salario));
                     Console.WriteLine("Sua meta de gastos foi: {0}", MetaSituation(novoUsuario, meta));
                     Console.WriteLine("");
                     break;
@@ -127,7 +118,7 @@ class Financas
                     break;
 
                 case "7":
-                    Console.WriteLine("Digite o número da receita0 que deseja remover:");
+                    Console.WriteLine("Digite o número da receita que deseja remover:");
                     RemoverReceita(novoUsuario);
                     Console.WriteLine("");
                     break;
@@ -191,10 +182,15 @@ class Financas
     }
     public static DateTime ObterDataDespesa()
     {
-        string dataDespesa = Console.ReadLine();
-        CultureInfo provider = new("pt-BR");
-        DateTime data = DateTime.Parse(dataDespesa, provider);
-        return data;
+        DateTime dataDespesa;
+        bool? deuCerto;
+        do
+        {
+            Console.WriteLine("Digite a data de vencimento da despesa: dd/mm/aaaa");
+            CultureInfo provider = new("pt-BR");
+            deuCerto = DateTime.TryParse(Console.ReadLine(), provider, out dataDespesa);
+        } while (deuCerto == null);
+        return dataDespesa;
     }
     public static Despesa.CategoriaDespesa ObterCategoria()
     {
@@ -225,10 +221,15 @@ class Financas
     }
     public static DateTime ObterDataReceita()
     {
-        string dataReceita = Console.ReadLine();
-        CultureInfo provider = new("pt-BR");
-        DateTime data = DateTime.Parse(dataReceita, provider);
-        return data;
+        DateTime dataReceita;
+        bool? deuCerto;
+        do
+        {
+            Console.WriteLine("Digite a data do recebimento do valor: dd/mm/aaaa");
+            CultureInfo provider = new("pt-BR");
+            deuCerto = DateTime.TryParse(Console.ReadLine(), provider, out dataReceita);
+        } while (deuCerto == null);
+        return dataReceita;
     }
     public static Receita.CategoriaReceita ObterCategoriaReceita()
     {
@@ -281,53 +282,70 @@ class Financas
         }
         return x;
     }
-    public static string ExibirCategoria(Usuario novoUsuario, string nome)
-    {
-
-        for (int i = 0; i < novoUsuario.Despesas.Count; i++)
-        {
-
-            Despesa x = novoUsuario.Despesas[i];
-            nome = Convert.ToString(x.Categoria);
-        }
-        return nome;
-
-    }
     public static string ObterSituacaoDespesa()
     {
-        int situacao = Convert.ToInt32(Console.ReadLine());
+        bool deuCerto;
         string retorno;
-        if (situacao == 1)
+        int situacao; ;
+        do
         {
-            retorno = "Paga";
-        }
-        else { retorno = "Não paga"; }
+            Console.WriteLine("Digite o número referente a situaçao da despesa: ");
+            Console.WriteLine("1- Paga");
+            Console.WriteLine("2-Não paga");
+            deuCerto = int.TryParse(Console.ReadLine(), out situacao);
+            if (situacao == 1)
+            {
+                retorno = "Paga";
+            }
+            else { retorno = "Não paga"; }
+        } while (situacao != 1 && situacao != 2);
         return retorno;
     }
     public static string ObterSituacaoReceita()
     {
-        int situacaoReceita = Convert.ToInt32(Console.ReadLine());
         string retorno;
-        if (situacaoReceita == 1)
+        int situacaoReceita;
+        bool deuCerto;
+        do
         {
-            retorno = "Recebida";
-        }
-        else { retorno = "Não recebida"; }
+            Console.WriteLine("Digite o número referente a situaçãp da receita:");
+            Console.WriteLine("1- Recebida");
+            Console.WriteLine("2- Não recebida");
+            deuCerto = int.TryParse(Console.ReadLine(), out situacaoReceita);
+
+            if (situacaoReceita == 1)
+            {
+                retorno = "Recebida";
+            }
+            else { retorno = "Não recebida"; }
+        } while (situacaoReceita != 1 && situacaoReceita != 2);
         return retorno;
     }
     public static void RemoverDespesa(Usuario novoUsuario)
     {
-        int pos = Convert.ToInt32(Console.ReadLine());
-        novoUsuario.Despesas.RemoveAt(pos - 1);
-        Console.WriteLine("Despesa removida!");
-
+        if (novoUsuario.Despesas.Count == 0)
+        {
+            Console.WriteLine("Não há despesas para remover!");
+        }
+        else
+        {
+            int pos = Convert.ToInt32(Console.ReadLine());
+            novoUsuario.Despesas.RemoveAt(pos - 1);
+            Console.WriteLine("Despesa removida!");
+        }
     }
     public static void RemoverReceita(Usuario novoUsuario)
     {
-        int pos = Convert.ToInt32(Console.ReadLine());
-        novoUsuario.Receitas.RemoveAt(pos - 1);
-        Console.WriteLine("Receita removida!");
-
+        if (novoUsuario.Receitas.Count == 0)
+        {
+            Console.WriteLine("Não há receitas para remover!");
+        }
+        else
+        {
+            int pos = Convert.ToInt32(Console.ReadLine());
+            novoUsuario.Receitas.RemoveAt(pos - 1);
+            Console.WriteLine("Receita removida!");
+        }
     }
     public static void DivisaoDespesas(Usuario novoUsuario)
     {
