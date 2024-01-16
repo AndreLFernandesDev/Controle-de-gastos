@@ -1,9 +1,11 @@
 ﻿using System.Globalization;
+using dotenv.net;
 using Dominios;
 class Financas
 {
     private static void Main()
     {
+        DotEnv.Load();
         string nome = ObterNome();
         decimal salario = ObterSalario();
         decimal meta = ObterMeta();
