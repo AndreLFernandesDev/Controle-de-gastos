@@ -88,7 +88,7 @@ class Financas
                     string nomeReceita = ObterNomeReceita();
                     decimal valorReceita = ObterValorReceita();
                     DateTime dataReceita = ObterDataReceita();
-                    string situacaoRec = ObterSituacaoReceita();
+                    string situacaoReceita = ObterSituacaoReceita();
                     Console.WriteLine("Digite o número correspondente a categoria da receita:");
                     Console.WriteLine("1- Presentes");
                     Console.WriteLine("2- Prêmios");
@@ -97,8 +97,7 @@ class Financas
                     Console.WriteLine("5- Salário");
                     Console.WriteLine("6- Outros");
                     Receita.CategoriaReceita categoriaReceita = ObterCategoriaReceita();
-                    Receita novaReceita = new(nomeReceita, valorReceita, dataReceita, categoriaReceita, situacaoRec);
-                    novoUsuario.Receitas.Add(novaReceita);
+                    await Db.AddReceita(nomeReceita, valorReceita, dataReceita, situacaoReceita, categoriaReceita);
                     Console.WriteLine("");
                     break;
 
