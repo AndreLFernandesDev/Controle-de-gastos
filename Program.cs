@@ -3,7 +3,7 @@ using dotenv.net;
 using Dominios;
 class Financas
 {
-    private static void Main()
+    private static async Task Main()
     {
         DotEnv.Load();
         string nome = ObterNome();
@@ -80,9 +80,7 @@ class Financas
                     Console.WriteLine("9-Beleza");
                     Console.WriteLine("10- Outros");
                     Despesa.CategoriaDespesa categoria = ObterCategoria();
-                    Despesa novaDespesa = new(nomeDespesa, valorDespesa, dataDespesa, situacao, categoria);
-                    novoUsuario.Despesas.Add(novaDespesa);
-                    Console.WriteLine("");
+                    await Db.AddDespesa(nomeDespesa, valorDespesa, dataDespesa, situacao, categoria);
                     break;
                 case "4":
 
