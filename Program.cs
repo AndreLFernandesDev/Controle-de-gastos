@@ -30,32 +30,25 @@ class Financas
                 case "1":
                     Console.WriteLine("LISTA DE DESPESAS");
                     Console.WriteLine("-----------------");
-                    if (novoUsuario.Despesas.Count == 0)
+                    var despesa = await Db.ImprimirDespesa();
+                    for (int i = 0; i < despesa.Count; i++)
                     {
-                        Console.WriteLine("vazia");
+                        Despesa x = despesa[i];
+                        Console.WriteLine("Nome: {0} | Valor:R$ {1} | Data de vencimento: {2} | Situação: {3} | Categoria: {4}",
+                        x.NomeDespesa, x.ValorDespesa, x.DataDespesa, x.SituacaoDespesa, x.Categoria);
                     }
-                    for (int i = 0; i < novoUsuario.Despesas.Count; i++)
-                    {
-                        Despesa x = novoUsuario.Despesas[i];
-                        int pos = i + 1;
-                        Console.WriteLine("{0}-Nome: {1} | Valor:R$ {2} | Data de vencimento: {3} | Categoria: {4} | Situação: {5}",
-                        pos, x.NomeDespesa, x.ValorDespesa, x.DataDespesa, x.Categoria, x.SituacaoDespesa);
-                    }
+
                     Console.WriteLine("");
                     break;
                 case "2":
                     Console.WriteLine("LISTA DE RECEITAS");
                     Console.WriteLine("-----------------");
-                    if (novoUsuario.Receitas.Count == 0)
+                    var receita = await Db.ListarReceita();
+                    for (int i = 0; i < receita.Count; i++)
                     {
-                        Console.WriteLine("vazia");
-                    }
-                    for (int i = 0; i < novoUsuario.Receitas.Count; i++)
-                    {
-                        Receita x = novoUsuario.Receitas[i];
-                        int pos = i + 1;
-                        Console.WriteLine("{0}-Nome: {1} | Valor:R$ {2} | Data recebimento: {3} | Categoria: {4} | Situação: {5}",
-                        pos, x.NomeReceita, x.ValorReceita, x.DataReceita, x.Categoria, x.SituacaoReceita);
+                        Receita x = receita[i];
+                        Console.WriteLine("Nome: {0} | Valor:R$ {1} | Data recebimento: {2} | Situação: {3} | Categoria: {4}",
+                         x.NomeReceita, x.ValorReceita, x.DataReceita, x.SituacaoReceita, x.Categoria);
 
                     }
                     Console.WriteLine("");
@@ -79,7 +72,7 @@ class Financas
                     Console.WriteLine("8-Supermercado");
                     Console.WriteLine("9-Beleza");
                     Console.WriteLine("10- Outros");
-                    Despesa.CategoriaDespesa categoria = ObterCategoria();
+                    string categoria = ObterCategoria();
                     await Db.AddDespesa(nomeDespesa, valorDespesa, dataDespesa, situacao, categoria);
                     break;
                 case "4":
@@ -96,7 +89,7 @@ class Financas
                     Console.WriteLine("4- Rendimentos");
                     Console.WriteLine("5- Salário");
                     Console.WriteLine("6- Outros");
-                    Receita.CategoriaReceita categoriaReceita = ObterCategoriaReceita();
+                    string categoriaReceita = ObterCategoriaReceita();
                     await Db.AddReceita(nomeReceita, valorReceita, dataReceita, situacaoReceita, categoriaReceita);
                     Console.WriteLine("");
                     break;
@@ -191,10 +184,11 @@ class Financas
         } while (deuCerto == null);
         return dataDespesa;
     }
-    public static Despesa.CategoriaDespesa ObterCategoria()
+    public static string ObterCategoria()
     {
         int categoria = Convert.ToInt32(Console.ReadLine());
-        return (Despesa.CategoriaDespesa)categoria;
+        string retorno = Convert.ToString((Despesa.CategoriaDespesa)categoria);
+        return retorno;
 
     }
     public static string ObterNomeReceita()
@@ -230,10 +224,11 @@ class Financas
         } while (deuCerto == null);
         return dataReceita;
     }
-    public static Receita.CategoriaReceita ObterCategoriaReceita()
+    public static string ObterCategoriaReceita()
     {
         int categoria = Convert.ToInt32(Console.ReadLine());
-        return (Receita.CategoriaReceita)categoria;
+        string retorno = Convert.ToString((Receita.CategoriaReceita)categoria);
+        return retorno;
 
     }
     public static decimal TotalDespesas(Usuario novoUsuario)

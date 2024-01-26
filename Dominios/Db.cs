@@ -1,5 +1,6 @@
 namespace Dominios
 {
+    using System.Runtime.CompilerServices;
     using dotenv.net;
     using MySqlConnector;
     class Db
@@ -16,7 +17,45 @@ namespace Dominios
                 Password = envVars["DB_PASSWORD"],
             };
         }
-        public static async Task AddDespesa(string nome, decimal valor, DateTime data, string situacao, Despesa.CategoriaDespesa categoria)
+        public static async Task<List<Despesa>> ImprimirDespesa()
+        {
+            List<Despesa> ListaDespesa = new();
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            {
+                await connection.OpenAsync();
+                using var command = connection.CreateCommand();
+                {
+                    command.CommandText = "SELECT*FROM Despesa;";
+                    using var reader = await command.ExecuteReaderAsync();
+                    while (await reader.ReadAsync())
+                    {
+                        Despesa novaDespesa = new(reader.GetString(0), reader.GetDecimal(1), reader.GetDateTime(2), reader.GetString(3), reader.GetString(4));
+                        ListaDespesa.Add(novaDespesa);
+                    }
+                }
+                return ListaDespesa;
+            }
+        }
+        public static async Task<List<Receita>> ListarReceita()
+        {
+            List<Receita> ListaReceita = new();
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            {
+                await connection.OpenAsync();
+                using var command = connection.CreateCommand();
+                {
+                    command.CommandText = "SELECT *FROM Receita";
+                    using var reader = await command.ExecuteReaderAsync();
+                    while (await reader.ReadAsync())
+                    {
+                        Receita novaReceita = new(reader.GetString(0), reader.GetDecimal(1), reader.GetDateTime(2), reader.GetString(3), reader.GetString(4));
+                        ListaReceita.Add(novaReceita);
+                    }
+                }
+                return ListaReceita;
+            }
+        }
+        public static async Task AddDespesa(string nome, decimal valor, DateTime data, string situacao, string categoria)
         {
             using var connection = new MySqlConnection(builder.ConnectionString);
             {
@@ -33,7 +72,7 @@ namespace Dominios
                 }
             }
         }
-        public static async Task AddReceita(string nome, decimal valor, DateTime data, string situacao, Receita.CategoriaReceita categoria)
+        public static async Task AddReceita(string nome, decimal valor, DateTime data, string situacao, string categoria)
         {
             using var connection = new MySqlConnection(builder.ConnectionString);
             {
