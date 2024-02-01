@@ -36,8 +36,8 @@ class Financas
                     for (int i = 0; i < despesa.Count; i++)
                     {
                         Despesa x = despesa[i];
-                        Console.WriteLine("Nome: {0} | Valor:R$ {1} | Data de vencimento: {2} | Situação: {3} | Categoria: {4}",
-                        x.NomeDespesa, x.ValorDespesa, x.DataDespesa, x.SituacaoDespesa, x.Categoria);
+                        Console.WriteLine("Id: {0} | Nome: {1} | Valor:R$ {2} | Data de vencimento: {3} | Situação: {4} | Categoria: {5}",
+                        x.IdDespesa, x.NomeDespesa, x.ValorDespesa, x.DataDespesa, x.SituacaoDespesa, x.Categoria);
                     }
 
                     Console.WriteLine("");
@@ -49,8 +49,8 @@ class Financas
                     for (int i = 0; i < receita.Count; i++)
                     {
                         Receita x = receita[i];
-                        Console.WriteLine("Nome: {0} | Valor:R$ {1} | Data recebimento: {2} | Situação: {3} | Categoria: {4}",
-                         x.NomeReceita, x.ValorReceita, x.DataReceita, x.SituacaoReceita, x.Categoria);
+                        Console.WriteLine("Id: {0} | Nome: {1} | Valor:R$ {2} | Data recebimento: {3} | Situação: {4} | Categoria: {5}",
+                         x.IdReceita, x.NomeReceita, x.ValorReceita, x.DataReceita, x.SituacaoReceita, x.Categoria);
 
                     }
                     Console.WriteLine("");
@@ -75,7 +75,7 @@ class Financas
                     Console.WriteLine("9-Beleza");
                     Console.WriteLine("10- Outros");
                     string categoria = ObterCategoria();
-                    await Db.AddDespesa(nomeDespesa, valorDespesa, dataDespesa, situacao, categoria);
+                    await Db.AddDespesa(id, nomeDespesa, valorDespesa, dataDespesa, situacao, categoria);
                     break;
                 case "4":
 
@@ -106,14 +106,14 @@ class Financas
                     break;
 
                 case "6":
-                    Console.WriteLine("Digite o número da despesa que deseja remover:");
-                    RemoverDespesa(novoUsuario);
+                    Console.WriteLine("Digite o ID da despesa que deseja remover:");
+                    RemoverDespesa();
                     Console.WriteLine("");
                     break;
 
                 case "7":
-                    Console.WriteLine("Digite o número da receita que deseja remover:");
-                    RemoverReceita(novoUsuario);
+                    Console.WriteLine("Digite o ID da receita que deseja remover:");
+                    RemoverReceita();
                     Console.WriteLine("");
                     break;
 
@@ -315,31 +315,16 @@ class Financas
         } while (situacaoReceita != 1 && situacaoReceita != 2);
         return retorno;
     }
-    public static void RemoverDespesa(Usuario novoUsuario)
+    public static async void RemoverDespesa()
     {
-        if (novoUsuario.Despesas.Count == 0)
-        {
-            Console.WriteLine("Não há despesas para remover!");
-        }
-        else
-        {
-            int pos = Convert.ToInt32(Console.ReadLine());
-            novoUsuario.Despesas.RemoveAt(pos - 1);
-            Console.WriteLine("Despesa removida!");
-        }
+        int id = Convert.ToInt32(Console.ReadLine());
+        await Db.DeletarDespesa(id);
     }
-    public static void RemoverReceita(Usuario novoUsuario)
+
+    public static async void RemoverReceita()
     {
-        if (novoUsuario.Receitas.Count == 0)
-        {
-            Console.WriteLine("Não há receitas para remover!");
-        }
-        else
-        {
-            int pos = Convert.ToInt32(Console.ReadLine());
-            novoUsuario.Receitas.RemoveAt(pos - 1);
-            Console.WriteLine("Receita removida!");
-        }
+        int id = Convert.ToInt32(Console.ReadLine());
+        await Db.DeletarReceita(id);
     }
     public static async Task DivisaoDespesas()
     {

@@ -46,7 +46,7 @@ namespace Dominios
                     using var reader = await command.ExecuteReaderAsync();
                     while (await reader.ReadAsync())
                     {
-                        Despesa novaDespesa = new(reader.GetString(0), reader.GetDecimal(1), reader.GetDateTime(2), reader.GetString(3), reader.GetString(4));
+                        Despesa novaDespesa = new(reader.GetInt32(0), reader.GetString(1), reader.GetDecimal(2), reader.GetDateTime(3), reader.GetString(4), reader.GetString(5));
                         ListaDespesa.Add(novaDespesa);
                     }
                 }
@@ -65,21 +65,21 @@ namespace Dominios
                     using var reader = await command.ExecuteReaderAsync();
                     while (await reader.ReadAsync())
                     {
-                        Receita novaReceita = new(reader.GetString(0), reader.GetDecimal(1), reader.GetDateTime(2), reader.GetString(3), reader.GetString(4));
+                        Receita novaReceita = new(reader.GetInt32(0), reader.GetString(1), reader.GetDecimal(2), reader.GetDateTime(3), reader.GetString(4), reader.GetString(5));
                         ListaReceita.Add(novaReceita);
                     }
                 }
                 return ListaReceita;
             }
         }
-        public static async Task AddDespesa(string nome, decimal valor, DateTime data, string situacao, string categoria)
+        public static async Task AddDespesa(int id, string nome, decimal valor, DateTime data, string situacao, string categoria)
         {
             using var connection = new MySqlConnection(builder.ConnectionString);
             {
                 await connection.OpenAsync();
                 using var command = connection.CreateCommand();
                 {
-                    command.CommandText = "INSERT INTO Despesa(nome_despesa,valor_despesa,data_despesa,categoria,situacao)VALUES(@nome,@valor,@data,@categoria,@situacao);";
+                    command.CommandText = "INSERT INTO Despesa(nome_despesa,valor_despesa,data_despesa,categoria_despesa,situacao_despesa)VALUES(@nome,@valor,@data,@categoria,@situacao);";
                     command.Parameters.AddWithValue("@nome", nome);
                     command.Parameters.AddWithValue("@valor", valor);
                     command.Parameters.AddWithValue("@data", data);
@@ -96,7 +96,7 @@ namespace Dominios
                 await connection.OpenAsync();
                 using var command = connection.CreateCommand();
                 {
-                    command.CommandText = "INSERT INTO Receita(receita_nome,receita_valor,receita_data,receita_categoria,receita_situacao)VALUES (@nome,@valor,@data,@situacao,@categoria);";
+                    command.CommandText = "INSERT INTO Receita(nome_receita,valor_receita,data_receita,categoria_receita,situacao_receita)VALUES (@nome,@valor,@data,@situacao,@categoria);";
                     command.Parameters.AddWithValue("@nome", nome);
                     command.Parameters.AddWithValue("@valor", valor);
                     command.Parameters.AddWithValue("@data", data);
@@ -179,6 +179,36 @@ namespace Dominios
                 }
             }
             return meta;
+        }
+        public static async Task<int> DeletarDespesa(int id)
+        {
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            {
+                await connection.OpenAsync();
+                using var command = connection.CreateCommand();
+                {
+                    command.CommandText = "DELETE FROM Despesa WHERE id_despesa=@id;";
+                    command.Parameters.AddWithValue("@id", id);
+                    int rowCount = await command.ExecuteNonQueryAsync();
+                    return rowCount;
+                }
+            }
+
+        }
+        public static async Task<int> DeletarReceita(int id)
+        {
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            {
+                await connection.OpenAsync();
+                using var command = connection.CreateCommand();
+                {
+                    command.CommandText = "DELETE FROM Receita WHERE id_receita=@id;";
+                    command.Parameters.AddWithValue("@id", id);
+                    int rowCount = await command.ExecuteNonQueryAsync();
+                    return rowCount;
+                }
+            }
+
         }
     }
 }
