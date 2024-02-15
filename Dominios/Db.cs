@@ -34,7 +34,26 @@ namespace Dominios
                 }
             }
         }
-        public static async Task<List<Despesa>> ImprimirDespesa()
+        public static async Task<List<Usuario>> RetornarUsuarios()
+        {
+            List<Usuario> ListaUsuarios = new();
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            {
+                await connection.OpenAsync();
+                using var command = connection.CreateCommand();
+                {
+                    command.CommandText = "SELECT *FROM Usuario;";
+                    using var reader = await command.ExecuteReaderAsync();
+                    while (await reader.ReadAsync())
+                    {
+                        Usuario novoUsuario = new(reader.GetInt32(0), reader.GetString(1), reader.GetDecimal(2), reader.GetDecimal(3));
+                        ListaUsuarios.Add(novoUsuario);
+                    }
+                }
+                return ListaUsuarios;
+            }
+        }
+        public static async Task<List<Despesa>> RetornarDespesa()
         {
             List<Despesa> ListaDespesa = new();
             using var connection = new MySqlConnection(builder.ConnectionString);
@@ -53,7 +72,7 @@ namespace Dominios
                 return ListaDespesa;
             }
         }
-        public static async Task<List<Receita>> ListarReceita()
+        public static async Task<List<Receita>> RetornarReceita()
         {
             List<Receita> ListaReceita = new();
             using var connection = new MySqlConnection(builder.ConnectionString);
@@ -105,80 +124,6 @@ namespace Dominios
                     int rowCount = await command.ExecuteNonQueryAsync();
                 }
             }
-        }
-        public static async Task<List<decimal>> ValoresDespesas()
-        {
-            List<decimal> ValoresDespesas = new();
-            using var connection = new MySqlConnection(builder.ConnectionString);
-            {
-                await connection.OpenAsync();
-                using var command = connection.CreateCommand();
-                {
-                    command.CommandText = "SELECT valor_despesa FROM Despesa;";
-                    using var reader = await command.ExecuteReaderAsync();
-                    while (await reader.ReadAsync())
-                    {
-                        decimal valorDespesa = new(reader.GetDouble(0));
-                        ValoresDespesas.Add(valorDespesa);
-                    }
-                }
-            }
-            return ValoresDespesas;
-        }
-        public static async Task<List<decimal>> ValoresReceitas()
-        {
-            List<decimal> ValoresReceitas = new();
-            using var connection = new MySqlConnection(builder.ConnectionString);
-            {
-                await connection.OpenAsync();
-                using var command = connection.CreateCommand();
-                {
-                    command.CommandText = "SELECT receita_valor FROM Receita;";
-                    using var reader = await command.ExecuteReaderAsync();
-                    while (await reader.ReadAsync())
-                    {
-                        decimal valorReceita = new(reader.GetDouble(0));
-                        ValoresReceitas.Add(valorReceita);
-                    }
-                }
-            }
-            return ValoresReceitas;
-        }
-        public static async Task<decimal> RetornarSalario()
-        {
-            decimal valorSalario = 0;
-            using var connection = new MySqlConnection(builder.ConnectionString);
-            {
-                await connection.OpenAsync();
-                using var command = connection.CreateCommand();
-                {
-                    command.CommandText = "SELECT valor_salario FROM Usuario;";
-                    using var reader = await command.ExecuteReaderAsync();
-                    while (await reader.ReadAsync())
-                    {
-                        valorSalario = new(reader.GetDouble(0));
-                    }
-                }
-            }
-            return valorSalario;
-        }
-        public static async Task<decimal> RetonarMeta()
-        {
-            decimal meta = 0;
-            using var connection = new MySqlConnection(builder.ConnectionString);
-            {
-                await connection.OpenAsync();
-                using var command = connection.CreateCommand();
-                {
-                    command.CommandText = "SELECT meta_gastos FROM Usuario;";
-                    using var reader = await command.ExecuteReaderAsync();
-                    while (await reader.ReadAsync())
-                    {
-                        meta = new(reader.GetDouble(0));
-                    }
-                }
-            }
-            return meta;
         }
         public static async Task<int> DeletarDespesa(int id)
         {
