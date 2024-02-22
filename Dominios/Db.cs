@@ -53,7 +53,7 @@ namespace Dominios
                 return ListaUsuarios;
             }
         }
-        public static async Task<List<Despesa>> RetornarDespesa()
+        public static async Task<List<Despesa>> RetornarDespesa(int idUsuario)
         {
             List<Despesa> ListaDespesa = new();
             using var connection = new MySqlConnection(builder.ConnectionString);
@@ -61,18 +61,19 @@ namespace Dominios
                 await connection.OpenAsync();
                 using var command = connection.CreateCommand();
                 {
-                    command.CommandText = "SELECT*FROM Despesa;";
+                    command.CommandText = "SELECT*FROM Despesa WHERE id_usuario=@idUsuario;";
+                    command.Parameters.AddWithValue("@idUsuario", idUsuario);
                     using var reader = await command.ExecuteReaderAsync();
                     while (await reader.ReadAsync())
                     {
-                        Despesa novaDespesa = new(reader.GetInt32(0), reader.GetString(1), reader.GetDecimal(2), reader.GetDateTime(3), reader.GetString(4), reader.GetString(5));
+                        Despesa novaDespesa = new(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2), reader.GetDecimal(3), reader.GetDateTime(4), reader.GetString(5), reader.GetString(6));
                         ListaDespesa.Add(novaDespesa);
                     }
                 }
                 return ListaDespesa;
             }
         }
-        public static async Task<List<Receita>> RetornarReceita()
+        public static async Task<List<Receita>> RetornarReceita(int idUsuario)
         {
             List<Receita> ListaReceita = new();
             using var connection = new MySqlConnection(builder.ConnectionString);
@@ -80,25 +81,27 @@ namespace Dominios
                 await connection.OpenAsync();
                 using var command = connection.CreateCommand();
                 {
-                    command.CommandText = "SELECT *FROM Receita";
+                    command.CommandText = "SELECT *FROM Receita WHERE id_usuario=@idUsuario";
+                    command.Parameters.AddWithValue("@idUsuario", idUsuario);
                     using var reader = await command.ExecuteReaderAsync();
                     while (await reader.ReadAsync())
                     {
-                        Receita novaReceita = new(reader.GetInt32(0), reader.GetString(1), reader.GetDecimal(2), reader.GetDateTime(3), reader.GetString(4), reader.GetString(5));
+                        Receita novaReceita = new(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2), reader.GetDecimal(3), reader.GetDateTime(4), reader.GetString(5), reader.GetString(6));
                         ListaReceita.Add(novaReceita);
                     }
                 }
                 return ListaReceita;
             }
         }
-        public static async Task AddDespesa(int id, string nome, decimal valor, DateTime data, string situacao, string categoria)
+        public static async Task AddDespesa(int idUsuario, string nome, decimal valor, DateTime data, string categoria, string situacao)
         {
             using var connection = new MySqlConnection(builder.ConnectionString);
             {
                 await connection.OpenAsync();
                 using var command = connection.CreateCommand();
                 {
-                    command.CommandText = "INSERT INTO Despesa(nome_despesa,valor_despesa,data_despesa,categoria_despesa,situacao_despesa)VALUES(@nome,@valor,@data,@categoria,@situacao);";
+                    command.CommandText = "INSERT INTO Despesa(id_usuario,nome_despesa,valor_despesa,data_despesa,categoria_despesa,situacao_despesa)VALUES(@idUsuario,@nome,@valor,@data,@categoria,@situacao);";
+                    command.Parameters.AddWithValue("@idUsuario", idUsuario);
                     command.Parameters.AddWithValue("@nome", nome);
                     command.Parameters.AddWithValue("@valor", valor);
                     command.Parameters.AddWithValue("@data", data);
@@ -108,14 +111,15 @@ namespace Dominios
                 }
             }
         }
-        public static async Task AddReceita(string nome, decimal valor, DateTime data, string situacao, string categoria)
+        public static async Task AddReceita(int idUsuario, string nome, decimal valor, DateTime data, string situacao, string categoria)
         {
             using var connection = new MySqlConnection(builder.ConnectionString);
             {
                 await connection.OpenAsync();
                 using var command = connection.CreateCommand();
                 {
-                    command.CommandText = "INSERT INTO Receita(nome_receita,valor_receita,data_receita,categoria_receita,situacao_receita)VALUES (@nome,@valor,@data,@situacao,@categoria);";
+                    command.CommandText = "INSERT INTO Receita(id_usuario,nome_receita,valor_receita,data_receita,categoria_receita,situacao_receita)VALUES (@idUsuario,@nome,@valor,@data,@situacao,@categoria);";
+                    command.Parameters.AddWithValue("idUsuario", idUsuario);
                     command.Parameters.AddWithValue("@nome", nome);
                     command.Parameters.AddWithValue("@valor", valor);
                     command.Parameters.AddWithValue("@data", data);

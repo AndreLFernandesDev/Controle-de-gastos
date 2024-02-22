@@ -10,10 +10,10 @@ namespace Dominios
         public List<Receita> Receitas { get; set; } = new List<Receita>();
         public Usuario(int usuarioId, string nomeUsuario, decimal valorSalario, decimal metaGastos)
         {
-            this.UsuarioId = usuarioId;
-            this.NomeUsuario = nomeUsuario;
-            this.ValorSalario = valorSalario;
-            this.MetaGastos = metaGastos;
+            UsuarioId = usuarioId;
+            NomeUsuario = nomeUsuario;
+            ValorSalario = valorSalario;
+            MetaGastos = metaGastos;
         }
     }
 }

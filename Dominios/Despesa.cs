@@ -2,6 +2,7 @@ namespace Dominios
 {
     class Despesa
     {
+        public int IdUsuario { get; set; }
         public int IdDespesa { get; set; }
         public string NomeDespesa { get; set; }
         public decimal ValorDespesa { get; set; }
@@ -13,14 +14,15 @@ namespace Dominios
             Lazer = 1, Transporte, Moradia, Saúde, Internet, Academia, Telefone, Supermercado, Beleza,
             Outros
         };
-        public Despesa(int idDespesa, string nomeDespesa, decimal valorDespesa, DateTime dataDespesa, string situacaoDespesa, string categoria)
+        public Despesa(int idUsuario, int idDespesa, string nomeDespesa, decimal valorDespesa, DateTime dataDespesa, string situacaoDespesa, string categoria)
         {
-            this.IdDespesa = idDespesa;
-            this.NomeDespesa = nomeDespesa;
-            this.ValorDespesa = valorDespesa;
-            this.DataDespesa = dataDespesa;
-            this.SituacaoDespesa = situacaoDespesa;
-            this.Categoria = categoria;
+            IdUsuario = IdUsuario;
+            IdDespesa = idDespesa;
+            NomeDespesa = nomeDespesa;
+            ValorDespesa = valorDespesa;
+            DataDespesa = dataDespesa;
+            SituacaoDespesa = situacaoDespesa;
+            Categoria = categoria;
         }
     }
 }
