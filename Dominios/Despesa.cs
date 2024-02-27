@@ -7,22 +7,17 @@ namespace Dominios
         public string NomeDespesa { get; set; }
         public decimal ValorDespesa { get; set; }
         public DateTime DataDespesa { get; set; }
-        public string Categoria { get; set; }
         public string SituacaoDespesa { get; set; }
-        public enum CategoriaDespesa
-        {
-            Lazer = 1, Transporte, Moradia, Saúde, Internet, Academia, Telefone, Supermercado, Beleza,
-            Outros
-        };
+        public string CategoriaDespesa { get; set; }
         public Despesa(int idUsuario, int idDespesa, string nomeDespesa, decimal valorDespesa, DateTime dataDespesa, string situacaoDespesa, string categoria)
         {
-            IdUsuario = IdUsuario;
+            IdUsuario = idUsuario;
             IdDespesa = idDespesa;
             NomeDespesa = nomeDespesa;
             ValorDespesa = valorDespesa;
             DataDespesa = dataDespesa;
             SituacaoDespesa = situacaoDespesa;
-            Categoria = categoria;
+            CategoriaDespesa = categoria;
         }
     }
 }

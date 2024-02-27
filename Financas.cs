@@ -67,7 +67,7 @@ class Financas
                         {
                             Despesa x = despesa[i];
                             Console.WriteLine("Id: {0} | Nome: {1} | Valor:R$ {2} | Data de vencimento: {3} | Situação: {4} | Categoria: {5}",
-                            x.IdDespesa, x.NomeDespesa, x.ValorDespesa, x.DataDespesa, x.SituacaoDespesa, x.Categoria);
+                            x.IdDespesa, x.NomeDespesa, x.ValorDespesa, x.DataDespesa, x.SituacaoDespesa, x.CategoriaDespesa);
                         }
                     }
                     else
@@ -87,7 +87,7 @@ class Financas
                         {
                             Receita x = receita[i];
                             Console.WriteLine("Id: {0} | Nome: {1} | Valor:R$ {2} | Data recebimento: {3} | Situação: {4} | Categoria: {5}",
-                             x.IdReceita, x.NomeReceita, x.ValorReceita, x.DataReceita, x.SituacaoReceita, x.Categoria);
+                             x.IdReceita, x.NomeReceita, x.ValorReceita, x.DataReceita, x.SituacaoReceita, x.CategoriaReceita);
 
                         }
                     }
@@ -105,17 +105,7 @@ class Financas
                     decimal valorDespesa = ObterValorDespesa();
                     DateTime dataDespesa = ObterDataDespesa();
                     string situacao = ObterSituacaoDespesa();
-                    Console.WriteLine("Digite o número correspondente a categoria da despesa:");
-                    Console.WriteLine("1- Lazer");
-                    Console.WriteLine("2- Transporte");
-                    Console.WriteLine("3- Moradia");
-                    Console.WriteLine("4- Saúde");
-                    Console.WriteLine("5- Internet");
-                    Console.WriteLine("6- Academia");
-                    Console.WriteLine("7- Telefone");
-                    Console.WriteLine("8-Supermercado");
-                    Console.WriteLine("9-Beleza");
-                    Console.WriteLine("10- Outros");
+                    Console.WriteLine("Digite o nome correspondente a categoria da despesa:");
                     string categoria = ObterCategoria();
                     await Db.AddDespesa(UsuarioAtual, nomeDespesa, valorDespesa, dataDespesa, situacao, categoria);
                     break;
@@ -126,24 +116,17 @@ class Financas
                     decimal valorReceita = ObterValorReceita();
                     DateTime dataReceita = ObterDataReceita();
                     string situacaoReceita = ObterSituacaoReceita();
-                    Console.WriteLine("Digite o número correspondente a categoria da receita:");
-                    Console.WriteLine("1- Presentes");
-                    Console.WriteLine("2- Prêmios");
-                    Console.WriteLine("3- Reembolso");
-                    Console.WriteLine("4- Rendimentos");
-                    Console.WriteLine("5- Salário");
-                    Console.WriteLine("6- Outros");
+                    Console.WriteLine("Digite o nome correspondente a categoria da receita:");
                     string categoriaReceita = ObterCategoriaReceita();
                     await Db.AddReceita(UsuarioAtual, nomeReceita, valorReceita, dataReceita, situacaoReceita, categoriaReceita);
                     Console.WriteLine("");
                     break;
 
                 case "5":
-                    //await DivisaoDespesas();
-                    Console.WriteLine("O valor total de despesas é R$ {0}", await TotalDespesas());
-                    Console.WriteLine("O valor total de receitas é R$ {0}", await TotalReceitas());
+                    Console.WriteLine("O valor total de despesas é R$ {0}", await SomarDespesas());
+                    Console.WriteLine("O valor total de receitas é R$ {0}", await SomarReceitas());
                     Console.WriteLine("O saldo restante após a soma de todas as receitas e subtraido as despesas é de: R${0}", await Restante());
-                    Console.WriteLine("Sua meta de gastos foi: {0}", await MetaSituation());
+                    //Console.WriteLine("Sua meta de gastos foi: {0}", await MetaSituation());
                     Console.WriteLine("");
                     break;
 
@@ -238,8 +221,7 @@ class Financas
     }
     public static string ObterCategoria()
     {
-        int categoria = Convert.ToInt32(Console.ReadLine());
-        string retorno = Convert.ToString((Despesa.CategoriaDespesa)categoria);
+        string retorno = Console.ReadLine();
         return retorno;
 
     }
@@ -278,64 +260,44 @@ class Financas
     }
     public static string ObterCategoriaReceita()
     {
-        int categoria = Convert.ToInt32(Console.ReadLine());
-        string retorno = Convert.ToString((Receita.CategoriaReceita)categoria);
+        string retorno = Console.ReadLine();
         return retorno;
 
     }
-    public static async Task<decimal> TotalDespesas()
+    public static async Task<decimal> SomarDespesas()
     {
-        decimal soma = 0;
-        var listaDespesas = await Db.RetornarDespesa(UsuarioAtual);
-        for (int i = 0; i < listaDespesas.Count; i++)
-        {
-            var valorDespesa = listaDespesas[i].ValorDespesa;
-            soma += valorDespesa;
-        }
+        decimal soma = await Db.SomarDespesa();
         return soma;
     }
-    public static async Task<decimal> TotalReceitas()
+    public static async Task<decimal> SomarReceitas()
     {
-        decimal soma = 0;
-        var listaReceitas = await Db.RetornarReceita(UsuarioAtual);
-        for (int i = 0; i < listaReceitas.Count; i++)
-        {
-            soma += listaReceitas[i].ValorReceita;
-        }
+        decimal soma = await Db.SomarReceita();
         return soma;
     }
     public static async Task<decimal> Restante()
     {
-        var listaUsuarios = await Db.RetornarUsuarios();
-        decimal restante = 0;
-        for (int i = 0; i < listaUsuarios.Count; i++)
-        {
-            decimal despesas = await TotalDespesas();
-            decimal receitas = await TotalReceitas();
-            restante = listaUsuarios[i].ValorSalario + receitas - despesas;
-        }
+
+        decimal despesas = await SomarDespesas();
+        decimal receitas = await SomarReceitas();
+        decimal restante = despesas - receitas;
         return restante;
     }
-    public static async Task<string> MetaSituation()
-    {
-        decimal meta = 0;
-        decimal despesas = await TotalDespesas();
-        var listaUsuarios = await Db.RetornarUsuarios();
-        for (int i = 0; i < listaUsuarios.Count; i++)
-        {
-            meta = listaUsuarios[i].MetaGastos;
-        }
-        string x;
-        if (despesas < meta)
-        {
-            x = "respeitada!";
-        }
-        else
-        {
-            x = "ultrapassada!";
-        }
-        return x;
-    }
+    // public static async Task<string> MetaSituation()
+    // {
+
+    //     decimal meta = await Db.RetornarUsuarios();
+    //     decimal despesas = await SomarDespesas();
+    //     string x;
+    //     if (despesas < meta)
+    //     {
+    //         x = "respeitada!";
+    //     }
+    //     else
+    //     {
+    //         x = "ultrapassada!";
+    //     }
+    //     return x;
+    // }
     public static string ObterSituacaoDespesa()
     {
         bool deuCerto;
@@ -386,7 +348,7 @@ class Financas
         int id = Convert.ToInt32(Console.ReadLine());
         await Db.DeletarReceita(id);
     }
-    // public static async Task DivisaoDespesas()
+    //public static async Task DivisaoDespesas()
     // {
     //     var chamada = await Db.ValoresDespesas();
     //     Task<decimal> somaLazer;

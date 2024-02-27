@@ -100,13 +100,13 @@ namespace Dominios
                 await connection.OpenAsync();
                 using var command = connection.CreateCommand();
                 {
-                    command.CommandText = "INSERT INTO Despesa(id_usuario,nome_despesa,valor_despesa,data_despesa,categoria_despesa,situacao_despesa)VALUES(@idUsuario,@nome,@valor,@data,@categoria,@situacao);";
+                    command.CommandText = "INSERT INTO Despesa(id_usuario,nome_despesa,valor_despesa,data_despesa,categoria_despesa,situacao_despesa)VALUES(@idUsuario,@nome,@valor,@data,@situacao,@categoria);";
                     command.Parameters.AddWithValue("@idUsuario", idUsuario);
                     command.Parameters.AddWithValue("@nome", nome);
                     command.Parameters.AddWithValue("@valor", valor);
                     command.Parameters.AddWithValue("@data", data);
-                    command.Parameters.AddWithValue("@categoria", categoria);
                     command.Parameters.AddWithValue("@situacao", situacao);
+                    command.Parameters.AddWithValue("@categoria", categoria);
                     int rowCount = await command.ExecuteNonQueryAsync();
                 }
             }
@@ -118,7 +118,7 @@ namespace Dominios
                 await connection.OpenAsync();
                 using var command = connection.CreateCommand();
                 {
-                    command.CommandText = "INSERT INTO Receita(id_usuario,nome_receita,valor_receita,data_receita,categoria_receita,situacao_receita)VALUES (@idUsuario,@nome,@valor,@data,@situacao,@categoria);";
+                    command.CommandText = "INSERT INTO Receita(id_usuario,nome_receita,valor_receita,data_receita,categoria_receita,situacao_receita)VALUES (@idUsuario,@nome,@valor,@data,@categoria,@situacao);";
                     command.Parameters.AddWithValue("idUsuario", idUsuario);
                     command.Parameters.AddWithValue("@nome", nome);
                     command.Parameters.AddWithValue("@valor", valor);
@@ -126,6 +126,42 @@ namespace Dominios
                     command.Parameters.AddWithValue("@situacao", situacao);
                     command.Parameters.AddWithValue("@categoria", categoria);
                     int rowCount = await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+        public static async Task<decimal> SomarDespesa()
+        {
+            decimal soma = 0;
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            {
+                await connection.OpenAsync();
+                using var command = connection.CreateCommand();
+                {
+                    command.CommandText = "SELECT SUM(valor_despesa) FROM Despesa;";
+                    using var reader = await command.ExecuteReaderAsync();
+                    while (await reader.ReadAsync())
+                    {
+                        soma = new(reader.GetDouble(0));
+                    }
+                    return soma;
+                }
+            }
+        }
+        public static async Task<decimal> SomarReceita()
+        {
+            decimal soma = 0;
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            {
+                await connection.OpenAsync();
+                using var command = connection.CreateCommand();
+                {
+                    command.CommandText = "SELECT SUM(valor_receita) FROM Receita;";
+                    using var reader = await command.ExecuteReaderAsync();
+                    while (await reader.ReadAsync())
+                    {
+                        soma = new(reader.GetDouble(0));
+                    }
+                    return soma;
                 }
             }
         }

@@ -7,10 +7,9 @@ namespace Dominios
         public string NomeReceita { get; set; }
         public decimal ValorReceita { get; set; }
         public DateTime DataReceita { get; set; }
-        public string Categoria { get; set; }
+        public string CategoriaReceita { get; set; }
         public string SituacaoReceita { get; set; }
-        public enum CategoriaReceita { Presentes = 1, Prêmios, Reembolso, Rendimentos, Salário, Outros };
-        public Receita(int idUsuario, int idReceita, string nomeReceita, decimal valorReceita, DateTime dataReceita, string categoriaReceita, string situacaoReceita)
+        public Receita(int idUsuario, int idReceita, string nomeReceita, decimal valorReceita, DateTime dataReceita, string situacaoReceita, string categoriaReceita)
         {
             IdUsuario = idUsuario;
             IdReceita = idReceita;
@@ -18,7 +17,7 @@ namespace Dominios
             ValorReceita = valorReceita;
             DataReceita = dataReceita;
             SituacaoReceita = situacaoReceita;
-            Categoria = categoriaReceita;
+            CategoriaReceita = categoriaReceita;
 
         }
 
