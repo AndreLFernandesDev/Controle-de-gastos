@@ -4,7 +4,7 @@ using Dominios;
 using System.Security.Cryptography;
 class Financas
 {
-    public static int UsuarioAtual;
+    public static Usuario UsuarioAtual;
     private static async Task Main()
     {
         DotEnv.Load();
@@ -18,7 +18,7 @@ class Financas
             if (opcao == 1)
             {
                 await CriarUsuario();
-                break;
+                //UsuarioAtual==?
             }
             else if (opcao == 2)
             {
@@ -31,14 +31,21 @@ class Financas
                 }
                 Console.WriteLine("");
                 Console.WriteLine("Digite o Id do seu usuário:");
-                UsuarioAtual = Convert.ToInt32(Console.ReadLine());
-                break;
+                int usuarioId = Convert.ToInt32(Console.ReadLine());
+                for (int i = 0; i < listaUsuarios.Count; i++)
+                {
+                    if (listaUsuarios[i].UsuarioId == usuarioId)
+                    {
+                        UsuarioAtual = listaUsuarios[i];
+                        break;
+                    }
+                }
             }
             else
             {
                 Console.WriteLine("Opção inválida");
             }
-        } while (opcao != 1 || opcao != 2);
+        } while (opcao != 1 && opcao != 2);
 
 
         string? escolha;
@@ -60,7 +67,7 @@ class Financas
                 case "1":
                     Console.WriteLine("LISTA DE DESPESAS");
                     Console.WriteLine("-----------------");
-                    var despesa = await Db.RetornarDespesa(UsuarioAtual);
+                    var despesa = await Db.RetornarDespesa(UsuarioAtual.UsuarioId);
                     if (despesa.Count > 0)
                     {
                         for (int i = 0; i < despesa.Count; i++)
@@ -80,7 +87,7 @@ class Financas
                 case "2":
                     Console.WriteLine("LISTA DE RECEITAS");
                     Console.WriteLine("-----------------");
-                    var receita = await Db.RetornarReceita(UsuarioAtual);
+                    var receita = await Db.RetornarReceita(UsuarioAtual.UsuarioId);
                     if (receita.Count > 1)
                     {
                         for (int i = 0; i < receita.Count; i++)
@@ -107,7 +114,7 @@ class Financas
                     string situacao = ObterSituacaoDespesa();
                     Console.WriteLine("Digite o nome correspondente a categoria da despesa:");
                     string categoria = ObterCategoria();
-                    await Db.AddDespesa(UsuarioAtual, nomeDespesa, valorDespesa, dataDespesa, situacao, categoria);
+                    await Db.AddDespesa(UsuarioAtual.UsuarioId, nomeDespesa, valorDespesa, dataDespesa, situacao, categoria);
                     break;
                 case "4":
 
@@ -118,7 +125,7 @@ class Financas
                     string situacaoReceita = ObterSituacaoReceita();
                     Console.WriteLine("Digite o nome correspondente a categoria da receita:");
                     string categoriaReceita = ObterCategoriaReceita();
-                    await Db.AddReceita(UsuarioAtual, nomeReceita, valorReceita, dataReceita, situacaoReceita, categoriaReceita);
+                    await Db.AddReceita(UsuarioAtual.UsuarioId, nomeReceita, valorReceita, dataReceita, situacaoReceita, categoriaReceita);
                     Console.WriteLine("");
                     break;
 
@@ -126,7 +133,7 @@ class Financas
                     Console.WriteLine("O valor total de despesas é R$ {0}", await SomarDespesas());
                     Console.WriteLine("O valor total de receitas é R$ {0}", await SomarReceitas());
                     Console.WriteLine("O saldo restante após a soma de todas as receitas e subtraido as despesas é de: R${0}", await Restante());
-                    //Console.WriteLine("Sua meta de gastos foi: {0}", await MetaSituation());
+                    Console.WriteLine("Status da sua meta de gastos foi: {0}", await MetaSituation());
                     Console.WriteLine("");
                     break;
 
@@ -282,22 +289,26 @@ class Financas
         decimal restante = despesas - receitas;
         return restante;
     }
-    // public static async Task<string> MetaSituation()
-    // {
-
-    //     decimal meta = await Db.RetornarUsuarios();
-    //     decimal despesas = await SomarDespesas();
-    //     string x;
-    //     if (despesas < meta)
-    //     {
-    //         x = "respeitada!";
-    //     }
-    //     else
-    //     {
-    //         x = "ultrapassada!";
-    //     }
-    //     return x;
-    // }
+    public static async Task<string> MetaSituation()
+    {
+        decimal meta = 0;
+        var ListaUsuarios = await Db.RetornarUsuarios();
+        for (int i = 0; i < ListaUsuarios.Count; i++)
+        {
+            meta = ListaUsuarios[i].MetaGastos;
+        }
+        decimal despesas = await SomarDespesas();
+        string retorno;
+        if (despesas <= meta)
+        {
+            retorno = "respeitada!";
+        }
+        else
+        {
+            retorno = "ultrapassada!";
+        }
+        return retorno;
+    }
     public static string ObterSituacaoDespesa()
     {
         bool deuCerto;
@@ -348,144 +359,147 @@ class Financas
         int id = Convert.ToInt32(Console.ReadLine());
         await Db.DeletarReceita(id);
     }
-    //public static async Task DivisaoDespesas()
-    // {
-    //     var chamada = await Db.ValoresDespesas();
-    //     Task<decimal> somaLazer;
-    //     Task<decimal> somaAcademia;
-    //     Task<decimal> somaBeleza;
-    //     Task<decimal> somaInternet;
-    //     Task<decimal> somaMoradia;
-    //     Task<decimal> somaSaude;
-    //     Task<decimal> somaSupermercado;
-    //     Task<decimal> somaTransporte;
-    //     Task<decimal> somaOutros;
-    //     Task<decimal> somaTelefone;
+    public static async Task DivisaoDespesas()
+    {
+        Console.WriteLine("DIVISÃO DESPESAS:");
 
-    //     for (int i = 0; i < chamada.Count; i++)
-    //     {
-    //         Task<List<Despesa>>despesas=await Db.RetornarDespesa();
-    //         if (despesas[i]==Despesa.CategoriaDespesa.Lazer)
-    //         {
-    //             Task<decimal> valor =Despesa.;
-    //             somaLazer += valor;
-    //         }
+        Console.WriteLine("DIVISÃO RECEITAS:");
+        //     var chamada = await Db.ValoresDespesas();
+        //     Task<decimal> somaLazer;
+        //     Task<decimal> somaAcademia;
+        //     Task<decimal> somaBeleza;
+        //     Task<decimal> somaInternet;
+        //     Task<decimal> somaMoradia;
+        //     Task<decimal> somaSaude;
+        //     Task<decimal> somaSupermercado;
+        //     Task<decimal> somaTransporte;
+        //     Task<decimal> somaOutros;
+        //     Task<decimal> somaTelefone;
 
-    //         else if (.Despesas[i].Categoria == Despesa.CategoriaDespesa.Academia)
-    //         {
-    //             Task<decimal> valor =despesas[i].ValorDespesa;
-    //             somaAcademia += valor;
-    //         }
-    //         else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Beleza)
-    //         {
-    //             Task<decimal> valor = novoUsuario.Despesas[i].ValorDespesa;
-    //             somaBeleza += valor;
-    //         }
-    //         else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Internet)
-    //         {
-    //             Task<decimal> valor = novoUsuario.Despesas[i].ValorDespesa;
-    //             somaInternet += valor;
-    //         }
-    //         else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Moradia)
-    //         {
-    //             Task<decimal> valor = novoUsuario.Despesas[i].ValorDespesa;
-    //             somaMoradia += valor;
-    //         }
-    //         else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Saúde)
-    //         {
-    //             Task<decimal> valor = novoUsuario.Despesas[i].ValorDespesa;
-    //             somaSaude += valor;
-    //         }
-    //         else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Supermercado)
-    //         {
-    //             Task<decimal> valor = novoUsuario.Despesas[i].ValorDespesa;
-    //             somaSupermercado += valor;
+        //     for (int i = 0; i < chamada.Count; i++)
+        //     {
+        //         Task<List<Despesa>>despesas=await Db.RetornarDespesa();
+        //         if (despesas[i]==Despesa.CategoriaDespesa.Lazer)
+        //         {
+        //             Task<decimal> valor =Despesa.;
+        //             somaLazer += valor;
+        //         }
 
-    //         }
-    //         else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Transporte)
-    //         {
-    //             Task<decimal> valor = novoUsuario.Despesas[i].ValorDespesa;
-    //             somaTransporte += valor;
-    //         }
-    //         else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Outros)
-    //         {
-    //             decimal valor = novoUsuario.Despesas[i].ValorDespesa;
-    //             Task<somaOutros> += valor;
-    //         }
-    //         else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Telefone)
-    //         {
-    //             Task<decimal> valor = novoUsuario.Despesas[i].ValorDespesa;
-    //             somaTelefone += valor;
-    //         }
-    //         Console.WriteLine("DIVISÃO DESPESAS (%)");
-    //         Console.WriteLine("____________________");
-    //         Console.WriteLine("Lazer-{0} %", somaLazer / TotalDespesas() * 100);
-    //         Console.WriteLine("Academia-{0} %", somaAcademia / TotalDespesas() * 100);
-    //         Console.WriteLine("Beleza-{0} %", somaBeleza / TotalDespesas() * 100);
-    //         Console.WriteLine("Internet-{0} %", somaInternet / TotalDespesas() * 100);
-    //         Console.WriteLine("Moradia-{0} %", somaMoradia / TotalDespesas() * 100);
-    //         Console.WriteLine("Saúde-{0} %", somaSaude / TotalDespesas() * 100);
-    //         Console.WriteLine("Supermercado-{0} %", somaSupermercado / TotalDespesas() * 100);
-    //         Console.WriteLine("Transporte-{0} %", somaTransporte / TotalDespesas() * 100);
-    //         Console.WriteLine("Telefone-{0} %", somaTelefone / TotalDespesas() * 100);
-    //         Console.WriteLine("Outros-{0} %", somaOutros / TotalDespesas() * 100);
-    //         Console.WriteLine("");
-    //     }
-    // }
-    // public static async Task DivisaoReceitas()
-    // {
-    //     var receitas=await Db.RetornarReceita();
-    //     Task<decimal> somaPresentes;
-    //     Task<decimal> somaPremios;
-    //     Task<decimal> somaReembolso;
-    //     Task<decimal> somaRendimentos;
-    //     Task<decimal> somaSalario;
-    //     Task<decimal> somaOutros;
+        //         else if (.Despesas[i].Categoria == Despesa.CategoriaDespesa.Academia)
+        //         {
+        //             Task<decimal> valor =despesas[i].ValorDespesa;
+        //             somaAcademia += valor;
+        //         }
+        //         else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Beleza)
+        //         {
+        //             Task<decimal> valor = novoUsuario.Despesas[i].ValorDespesa;
+        //             somaBeleza += valor;
+        //         }
+        //         else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Internet)
+        //         {
+        //             Task<decimal> valor = novoUsuario.Despesas[i].ValorDespesa;
+        //             somaInternet += valor;
+        //         }
+        //         else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Moradia)
+        //         {
+        //             Task<decimal> valor = novoUsuario.Despesas[i].ValorDespesa;
+        //             somaMoradia += valor;
+        //         }
+        //         else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Saúde)
+        //         {
+        //             Task<decimal> valor = novoUsuario.Despesas[i].ValorDespesa;
+        //             somaSaude += valor;
+        //         }
+        //         else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Supermercado)
+        //         {
+        //             Task<decimal> valor = novoUsuario.Despesas[i].ValorDespesa;
+        //             somaSupermercado += valor;
+
+        //         }
+        //         else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Transporte)
+        //         {
+        //             Task<decimal> valor = novoUsuario.Despesas[i].ValorDespesa;
+        //             somaTransporte += valor;
+        //         }
+        //         else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Outros)
+        //         {
+        //             decimal valor = novoUsuario.Despesas[i].ValorDespesa;
+        //             Task<somaOutros> += valor;
+        //         }
+        //         else if (novoUsuario.Despesas[i].Categoria == Despesa.CategoriaDespesa.Telefone)
+        //         {
+        //             Task<decimal> valor = novoUsuario.Despesas[i].ValorDespesa;
+        //             somaTelefone += valor;
+        //         }
+        //         Console.WriteLine("DIVISÃO DESPESAS (%)");
+        //         Console.WriteLine("____________________");
+        //         Console.WriteLine("Lazer-{0} %", somaLazer / TotalDespesas() * 100);
+        //         Console.WriteLine("Academia-{0} %", somaAcademia / TotalDespesas() * 100);
+        //         Console.WriteLine("Beleza-{0} %", somaBeleza / TotalDespesas() * 100);
+        //         Console.WriteLine("Internet-{0} %", somaInternet / TotalDespesas() * 100);
+        //         Console.WriteLine("Moradia-{0} %", somaMoradia / TotalDespesas() * 100);
+        //         Console.WriteLine("Saúde-{0} %", somaSaude / TotalDespesas() * 100);
+        //         Console.WriteLine("Supermercado-{0} %", somaSupermercado / TotalDespesas() * 100);
+        //         Console.WriteLine("Transporte-{0} %", somaTransporte / TotalDespesas() * 100);
+        //         Console.WriteLine("Telefone-{0} %", somaTelefone / TotalDespesas() * 100);
+        //         Console.WriteLine("Outros-{0} %", somaOutros / TotalDespesas() * 100);
+        //         Console.WriteLine("");
+        //     }
+        // }
+        // public static async Task DivisaoReceitas()
+        // {
+        //     var receitas=await Db.RetornarReceita();
+        //     Task<decimal> somaPresentes;
+        //     Task<decimal> somaPremios;
+        //     Task<decimal> somaReembolso;
+        //     Task<decimal> somaRendimentos;
+        //     Task<decimal> somaSalario;
+        //     Task<decimal> somaOutros;
 
 
-    //     for (int i = 0; i <receitas.Count; i++)
-    //     {
-    //         if (receitas[i]==Receita.CategoriaReceita.Presentes)
-    //         {
-    //             Task<decimal> valor = receitas[i].ValorReceita;
-    //             somaPresentes += valor;
-    //         }
+        //     for (int i = 0; i <receitas.Count; i++)
+        //     {
+        //         if (receitas[i]==Receita.CategoriaReceita.Presentes)
+        //         {
+        //             Task<decimal> valor = receitas[i].ValorReceita;
+        //             somaPresentes += valor;
+        //         }
 
-    //         else if (novoUsuario.Receitas[i].Categoria == Receita.CategoriaReceita.Prêmios)
-    //         {
-    //             Task<decimal> valor = novoUsuario.Receitas[i].ValorReceita;
-    //             somaPremios += valor;
-    //         }
-    //         else if (novoUsuario.Receitas[i].Categoria == Receita.CategoriaReceita.Reembolso)
-    //         {
-    //             Task<decimal> valor = novoUsuario.Receitas[i].ValorReceita;
-    //             somaReembolso += valor;
-    //         }
-    //         else if (novoUsuario.Receitas[i].Categoria == Receita.CategoriaReceita.Rendimentos)
-    //         {
-    //            Task<decimal> valor = novoUsuario.Receitas[i].ValorReceita;
-    //             somaRendimentos += valor;
-    //         }
-    //         else if (novoUsuario.Receitas[i].Categoria == Receita.CategoriaReceita.Salário)
-    //         {
-    //               Task<decimal> valor = novoUsuario.Receitas[i].ValorReceita;
-    //             somaSalario += valor;
-    //         }
-    //         else if (novoUsuario.Receitas[i].Categoria == Receita.CategoriaReceita.Outros)
-    //         {
-    //               Task<decimal> valor = novoUsuario.Receitas[i].ValorReceita;
-    //             somaOutros += valor;
-    //         }
+        //         else if (novoUsuario.Receitas[i].Categoria == Receita.CategoriaReceita.Prêmios)
+        //         {
+        //             Task<decimal> valor = novoUsuario.Receitas[i].ValorReceita;
+        //             somaPremios += valor;
+        //         }
+        //         else if (novoUsuario.Receitas[i].Categoria == Receita.CategoriaReceita.Reembolso)
+        //         {
+        //             Task<decimal> valor = novoUsuario.Receitas[i].ValorReceita;
+        //             somaReembolso += valor;
+        //         }
+        //         else if (novoUsuario.Receitas[i].Categoria == Receita.CategoriaReceita.Rendimentos)
+        //         {
+        //            Task<decimal> valor = novoUsuario.Receitas[i].ValorReceita;
+        //             somaRendimentos += valor;
+        //         }
+        //         else if (novoUsuario.Receitas[i].Categoria == Receita.CategoriaReceita.Salário)
+        //         {
+        //               Task<decimal> valor = novoUsuario.Receitas[i].ValorReceita;
+        //             somaSalario += valor;
+        //         }
+        //         else if (novoUsuario.Receitas[i].Categoria == Receita.CategoriaReceita.Outros)
+        //         {
+        //               Task<decimal> valor = novoUsuario.Receitas[i].ValorReceita;
+        //             somaOutros += valor;
+        //         }
 
-    //         Console.WriteLine("DIVISÃO RECEITAS (%)");
-    //         Console.WriteLine("____________________");
-    //         Console.WriteLine("Presentes-{0} %", somaPresentes / TotalReceitas() * 100);
-    //         Console.WriteLine("Prêmios-{0} %", somaPremios / TotalReceitas() * 100);
-    //         Console.WriteLine("Reembolso-{0} %", somaReembolso / TotalReceitas() * 100);
-    //         Console.WriteLine("Rendimentos-{0} %", somaRendimentos / TotalReceitas() * 100);
-    //         Console.WriteLine("Salário-{0} %", somaSalario / TotalReceitas() * 100);
-    //         Console.WriteLine("Outros-{0} %", somaOutros / TotalReceitas() * 100);
-    //         Console.WriteLine("");
-    //    }
-    //}
+        //         Console.WriteLine("DIVISÃO RECEITAS (%)");
+        //         Console.WriteLine("____________________");
+        //         Console.WriteLine("Presentes-{0} %", somaPresentes / TotalReceitas() * 100);
+        //         Console.WriteLine("Prêmios-{0} %", somaPremios / TotalReceitas() * 100);
+        //         Console.WriteLine("Reembolso-{0} %", somaReembolso / TotalReceitas() * 100);
+        //         Console.WriteLine("Rendimentos-{0} %", somaRendimentos / TotalReceitas() * 100);
+        //         Console.WriteLine("Salário-{0} %", somaSalario / TotalReceitas() * 100);
+        //         Console.WriteLine("Outros-{0} %", somaOutros / TotalReceitas() * 100);
+        //         Console.WriteLine("");
+        //    }
+    }
 }

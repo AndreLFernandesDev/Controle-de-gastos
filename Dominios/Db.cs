@@ -93,14 +93,14 @@ namespace Dominios
                 return ListaReceita;
             }
         }
-        public static async Task AddDespesa(int idUsuario, string nome, decimal valor, DateTime data, string categoria, string situacao)
+        public static async Task AddDespesa(int idUsuario, string nome, decimal valor, DateTime data, string situacao, string categoria)
         {
             using var connection = new MySqlConnection(builder.ConnectionString);
             {
                 await connection.OpenAsync();
                 using var command = connection.CreateCommand();
                 {
-                    command.CommandText = "INSERT INTO Despesa(id_usuario,nome_despesa,valor_despesa,data_despesa,categoria_despesa,situacao_despesa)VALUES(@idUsuario,@nome,@valor,@data,@situacao,@categoria);";
+                    command.CommandText = "INSERT INTO Despesa(id_usuario,nome_despesa,valor_despesa,data_despesa,situacao_despesa,categoria_despesa)VALUES(@idUsuario,@nome,@valor,@data,@situacao,@categoria);";
                     command.Parameters.AddWithValue("@idUsuario", idUsuario);
                     command.Parameters.AddWithValue("@nome", nome);
                     command.Parameters.AddWithValue("@valor", valor);
@@ -118,7 +118,7 @@ namespace Dominios
                 await connection.OpenAsync();
                 using var command = connection.CreateCommand();
                 {
-                    command.CommandText = "INSERT INTO Receita(id_usuario,nome_receita,valor_receita,data_receita,categoria_receita,situacao_receita)VALUES (@idUsuario,@nome,@valor,@data,@categoria,@situacao);";
+                    command.CommandText = "INSERT INTO Receita(id_usuario,nome_receita,valor_receita,data_receita,situacao_receita,categoria_receita)VALUES (@idUsuario,@nome,@valor,@data,@situacao,@categoria);";
                     command.Parameters.AddWithValue("idUsuario", idUsuario);
                     command.Parameters.AddWithValue("@nome", nome);
                     command.Parameters.AddWithValue("@valor", valor);
