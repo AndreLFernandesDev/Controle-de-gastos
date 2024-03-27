@@ -1,10 +1,12 @@
 ﻿using System.Globalization;
-using dotenv.net;
-using Dominios;
 using System.Security.Cryptography;
+using Dominios;
+using dotenv.net;
+
 class Financas
 {
     public static Usuario UsuarioAtual;
+
     private static async Task Main()
     {
         DotEnv.Load();
@@ -17,8 +19,21 @@ class Financas
         {
             if (opcao == 1)
             {
-                await CriarUsuario();
-                //UsuarioAtual==?
+                int id = 0;
+                string email = ObterEmail();
+                string nome = ObterNome();
+                decimal salario = ObterSalario();
+                decimal meta = ObterMeta();
+                await CriarUsuario(id, email, nome, salario, meta);
+                string emailUsuario = email;
+                var listaUsuarios = await Db.RetornarUsuarios();
+                for (int i = 0; i <= listaUsuarios.Count - 1; i++)
+                {
+                    if (emailUsuario == listaUsuarios[i].EmailUsuario)
+                    {
+                        UsuarioAtual = listaUsuarios[i];
+                    }
+                }
             }
             else if (opcao == 2)
             {
@@ -27,7 +42,11 @@ class Financas
                 Console.WriteLine("-----------------");
                 for (int i = 0; i < listaUsuarios.Count; i++)
                 {
-                    Console.WriteLine("Id: {0} - Nome: {1}", listaUsuarios[i].UsuarioId, listaUsuarios[i].NomeUsuario);
+                    Console.WriteLine(
+                        "Id: {0} - Nome: {1}",
+                        listaUsuarios[i].UsuarioId,
+                        listaUsuarios[i].NomeUsuario
+                    );
                 }
                 Console.WriteLine("");
                 Console.WriteLine("Digite o Id do seu usuário:");
@@ -46,7 +65,6 @@ class Financas
                 Console.WriteLine("Opção inválida");
             }
         } while (opcao != 1 && opcao != 2);
-
 
         string? escolha;
         do
@@ -73,8 +91,15 @@ class Financas
                         for (int i = 0; i < despesa.Count; i++)
                         {
                             Despesa x = despesa[i];
-                            Console.WriteLine("Id: {0} | Nome: {1} | Valor:R$ {2} | Data de vencimento: {3} | Situação: {4} | Categoria: {5}",
-                            x.IdDespesa, x.NomeDespesa, x.ValorDespesa, x.DataDespesa, x.SituacaoDespesa, x.CategoriaDespesa);
+                            Console.WriteLine(
+                                "Id: {0} | Nome: {1} | Valor:R$ {2} | Data de vencimento: {3} | Situação: {4} | Categoria: {5}",
+                                x.IdDespesa,
+                                x.NomeDespesa,
+                                x.ValorDespesa,
+                                x.DataDespesa,
+                                x.SituacaoDespesa,
+                                x.CategoriaDespesa
+                            );
                         }
                     }
                     else
@@ -93,9 +118,15 @@ class Financas
                         for (int i = 0; i < receita.Count; i++)
                         {
                             Receita x = receita[i];
-                            Console.WriteLine("Id: {0} | Nome: {1} | Valor:R$ {2} | Data recebimento: {3} | Situação: {4} | Categoria: {5}",
-                             x.IdReceita, x.NomeReceita, x.ValorReceita, x.DataReceita, x.SituacaoReceita, x.CategoriaReceita);
-
+                            Console.WriteLine(
+                                "Id: {0} | Nome: {1} | Valor:R$ {2} | Data recebimento: {3} | Situação: {4} | Categoria: {5}",
+                                x.IdReceita,
+                                x.NomeReceita,
+                                x.ValorReceita,
+                                x.DataReceita,
+                                x.SituacaoReceita,
+                                x.CategoriaReceita
+                            );
                         }
                     }
                     else
@@ -106,7 +137,6 @@ class Financas
                     break;
                 case "3":
 
-
                     //Adicionar despesa
                     string nomeDespesa = ObterNomeDespesa();
                     decimal valorDespesa = ObterValorDespesa();
@@ -114,7 +144,14 @@ class Financas
                     string situacao = ObterSituacaoDespesa();
                     Console.WriteLine("Digite o nome correspondente a categoria da despesa:");
                     string categoria = ObterCategoria();
-                    await Db.AddDespesa(UsuarioAtual.UsuarioId, nomeDespesa, valorDespesa, dataDespesa, situacao, categoria);
+                    await Db.AddDespesa(
+                        UsuarioAtual.UsuarioId,
+                        nomeDespesa,
+                        valorDespesa,
+                        dataDespesa,
+                        situacao,
+                        categoria
+                    );
                     break;
                 case "4":
 
@@ -125,15 +162,28 @@ class Financas
                     string situacaoReceita = ObterSituacaoReceita();
                     Console.WriteLine("Digite o nome correspondente a categoria da receita:");
                     string categoriaReceita = ObterCategoriaReceita();
-                    await Db.AddReceita(UsuarioAtual.UsuarioId, nomeReceita, valorReceita, dataReceita, situacaoReceita, categoriaReceita);
+                    await Db.AddReceita(
+                        UsuarioAtual.UsuarioId,
+                        nomeReceita,
+                        valorReceita,
+                        dataReceita,
+                        situacaoReceita,
+                        categoriaReceita
+                    );
                     Console.WriteLine("");
                     break;
 
                 case "5":
                     Console.WriteLine("O valor total de despesas é R$ {0}", await SomarDespesas());
                     Console.WriteLine("O valor total de receitas é R$ {0}", await SomarReceitas());
-                    Console.WriteLine("O saldo restante após a soma de todas as receitas e subtraido as despesas é de: R${0}", await Restante());
-                    Console.WriteLine("Status da sua meta de gastos foi: {0}", await MetaSituation());
+                    Console.WriteLine(
+                        "O saldo restante após a soma de todas as receitas e subtraido as despesas é de: R${0}",
+                        await Restante()
+                    );
+                    Console.WriteLine(
+                        "Status da sua meta de gastos foi: {0}",
+                        await MetaSituation()
+                    );
                     Console.WriteLine("");
                     break;
 
@@ -148,11 +198,10 @@ class Financas
                     RemoverReceita();
                     Console.WriteLine("");
                     break;
-
             }
         } while (escolha != "0");
-
     }
+
     public static string ObterNome()
     {
         string? nome;
@@ -163,6 +212,14 @@ class Financas
         } while (nome == null);
         return nome;
     }
+
+    public static string ObterEmail()
+    {
+        Console.WriteLine("Digite seu email:");
+        string email = Console.ReadLine();
+        return email;
+    }
+
     public static decimal ObterSalario()
     {
         bool? deuCerto;
@@ -174,6 +231,7 @@ class Financas
         } while (deuCerto == null);
         return salario;
     }
+
     public static decimal ObterMeta()
     {
         bool? deuCerto;
@@ -185,14 +243,18 @@ class Financas
         } while (deuCerto == null);
         return meta;
     }
-    public static async Task CriarUsuario()
+
+    public static async Task CriarUsuario(
+        int id,
+        string email,
+        string nome,
+        decimal salario,
+        decimal meta
+    )
     {
-        int id = 0;
-        string nome = ObterNome();
-        decimal salario = ObterSalario();
-        decimal meta = ObterMeta();
-        await Db.AddUsuario(id, nome, salario, meta);
+        await Db.AddUsuario(id, email, nome, salario, meta);
     }
+
     public static string ObterNomeDespesa()
     {
         string? nome;
@@ -203,6 +265,7 @@ class Financas
         } while (nome == null);
         return nome;
     }
+
     public static decimal ObterValorDespesa()
     {
         decimal valor;
@@ -214,6 +277,7 @@ class Financas
         } while (deuCerto == null);
         return valor;
     }
+
     public static DateTime ObterDataDespesa()
     {
         DateTime dataDespesa;
@@ -226,12 +290,13 @@ class Financas
         } while (deuCerto == null);
         return dataDespesa;
     }
+
     public static string ObterCategoria()
     {
         string retorno = Console.ReadLine();
         return retorno;
-
     }
+
     public static string ObterNomeReceita()
     {
         string? nome;
@@ -242,6 +307,7 @@ class Financas
         } while (nome == null);
         return nome;
     }
+
     public static decimal ObterValorReceita()
     {
         decimal valor;
@@ -253,6 +319,7 @@ class Financas
         } while (deuCerto == null);
         return valor;
     }
+
     public static DateTime ObterDataReceita()
     {
         DateTime dataReceita;
@@ -265,30 +332,33 @@ class Financas
         } while (deuCerto == null);
         return dataReceita;
     }
+
     public static string ObterCategoriaReceita()
     {
         string retorno = Console.ReadLine();
         return retorno;
-
     }
+
     public static async Task<decimal> SomarDespesas()
     {
         decimal soma = await Db.SomarDespesa();
         return soma;
     }
+
     public static async Task<decimal> SomarReceitas()
     {
         decimal soma = await Db.SomarReceita();
         return soma;
     }
+
     public static async Task<decimal> Restante()
     {
-
         decimal despesas = await SomarDespesas();
         decimal receitas = await SomarReceitas();
         decimal restante = despesas - receitas;
         return restante;
     }
+
     public static async Task<string> MetaSituation()
     {
         decimal meta = 0;
@@ -309,11 +379,13 @@ class Financas
         }
         return retorno;
     }
+
     public static string ObterSituacaoDespesa()
     {
         bool deuCerto;
         string retorno;
-        int situacao; ;
+        int situacao;
+        ;
         do
         {
             Console.WriteLine("Digite o número referente a situaçao da despesa: ");
@@ -324,10 +396,14 @@ class Financas
             {
                 retorno = "Paga";
             }
-            else { retorno = "Não paga"; }
+            else
+            {
+                retorno = "Não paga";
+            }
         } while (situacao != 1 && situacao != 2);
         return retorno;
     }
+
     public static string ObterSituacaoReceita()
     {
         string retorno;
@@ -344,10 +420,14 @@ class Financas
             {
                 retorno = "Recebida";
             }
-            else { retorno = "Não recebida"; }
+            else
+            {
+                retorno = "Não recebida";
+            }
         } while (situacaoReceita != 1 && situacaoReceita != 2);
         return retorno;
     }
+
     public static async void RemoverDespesa()
     {
         int id = Convert.ToInt32(Console.ReadLine());
@@ -359,6 +439,7 @@ class Financas
         int id = Convert.ToInt32(Console.ReadLine());
         await Db.DeletarReceita(id);
     }
+
     public static async Task DivisaoDespesas()
     {
         Console.WriteLine("DIVISÃO DESPESAS:");
