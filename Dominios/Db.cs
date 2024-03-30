@@ -46,6 +46,32 @@ namespace Dominios
             }
         }
 
+        public static async Task<Usuario?> BuscarUsuarioPorEmail(string email)
+        {
+            Usuario? novoUsuario = null;
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            {
+                await connection.OpenAsync();
+                using var command = connection.CreateCommand();
+                {
+                    command.CommandText = "SELECT *FROM Usuario WHERE email_usuario=@email;";
+                    command.Parameters.AddWithValue("email", email);
+                    using var reader = await command.ExecuteReaderAsync();
+                    while (await reader.ReadAsync())
+                    {
+                        novoUsuario = new(
+                            reader.GetInt32(0),
+                            reader.GetString(1),
+                            reader.GetString(2),
+                            reader.GetDecimal(3),
+                            reader.GetDecimal(4)
+                        );
+                    }
+                }
+            }
+            return novoUsuario;
+        }
+
         public static async Task<List<Usuario>> RetornarUsuarios()
         {
             List<Usuario> ListaUsuarios = new();
@@ -187,7 +213,7 @@ namespace Dominios
             }
         }
 
-        public static async Task<decimal> SomarDespesa()
+        public static async Task<decimal> SomarDespesa(int id)
         {
             decimal soma = 0;
             using var connection = new MySqlConnection(builder.ConnectionString);
@@ -195,18 +221,27 @@ namespace Dominios
                 await connection.OpenAsync();
                 using var command = connection.CreateCommand();
                 {
-                    command.CommandText = "SELECT SUM(valor_despesa) FROM Despesa;";
+                    command.CommandText =
+                        "SELECT SUM(valor_despesa) FROM Despesa WHERE id_usuario=@id;";
+                    command.Parameters.AddWithValue("@id", id);
                     using var reader = await command.ExecuteReaderAsync();
                     while (await reader.ReadAsync())
                     {
-                        soma = new(reader.GetDouble(0));
+                        if (reader.IsDBNull(0))
+                        {
+                            return 0;
+                        }
+                        else
+                        {
+                            soma = new(reader.GetDouble(0));
+                        }
                     }
                     return soma;
                 }
             }
         }
 
-        public static async Task<decimal> SomarReceita()
+        public static async Task<decimal> SomarReceita(int id)
         {
             decimal soma = 0;
             using var connection = new MySqlConnection(builder.ConnectionString);
@@ -214,11 +249,20 @@ namespace Dominios
                 await connection.OpenAsync();
                 using var command = connection.CreateCommand();
                 {
-                    command.CommandText = "SELECT SUM(valor_receita) FROM Receita;";
+                    command.CommandText =
+                        "SELECT SUM(valor_receita) FROM Receita WHERE id_usuario=@id;";
+                    command.Parameters.AddWithValue("@id", id);
                     using var reader = await command.ExecuteReaderAsync();
                     while (await reader.ReadAsync())
                     {
-                        soma = new(reader.GetDouble(0));
+                        if (reader.IsDBNull(0))
+                        {
+                            return 0;
+                        }
+                        else
+                        {
+                            soma = reader.GetDecimal(0);
+                        }
                     }
                     return soma;
                 }

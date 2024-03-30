@@ -19,21 +19,7 @@ class Financas
         {
             if (opcao == 1)
             {
-                int id = 0;
-                string email = ObterEmail();
-                string nome = ObterNome();
-                decimal salario = ObterSalario();
-                decimal meta = ObterMeta();
-                await CriarUsuario(id, email, nome, salario, meta);
-                string emailUsuario = email;
-                var listaUsuarios = await Db.RetornarUsuarios();
-                for (int i = 0; i <= listaUsuarios.Count - 1; i++)
-                {
-                    if (emailUsuario == listaUsuarios[i].EmailUsuario)
-                    {
-                        UsuarioAtual = listaUsuarios[i];
-                    }
-                }
+                UsuarioAtual = await CriarUsuario();
             }
             else if (opcao == 2)
             {
@@ -244,15 +230,16 @@ class Financas
         return meta;
     }
 
-    public static async Task CriarUsuario(
-        int id,
-        string email,
-        string nome,
-        decimal salario,
-        decimal meta
-    )
+    public static async Task<Usuario> CriarUsuario()
     {
+        int id = 0;
+        string email = ObterEmail();
+        string nome = ObterNome();
+        decimal salario = ObterSalario();
+        decimal meta = ObterMeta();
         await Db.AddUsuario(id, email, nome, salario, meta);
+        Usuario? novoUsuario = await Db.BuscarUsuarioPorEmail(email);
+        return novoUsuario;
     }
 
     public static string ObterNomeDespesa()
@@ -341,13 +328,13 @@ class Financas
 
     public static async Task<decimal> SomarDespesas()
     {
-        decimal soma = await Db.SomarDespesa();
+        decimal soma = await Db.SomarDespesa(UsuarioAtual.UsuarioId);
         return soma;
     }
 
     public static async Task<decimal> SomarReceitas()
     {
-        decimal soma = await Db.SomarReceita();
+        decimal soma = await Db.SomarReceita(UsuarioAtual.UsuarioId);
         return soma;
     }
 
