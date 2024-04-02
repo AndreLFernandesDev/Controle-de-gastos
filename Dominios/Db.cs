@@ -55,7 +55,7 @@ namespace Dominios
                 using var command = connection.CreateCommand();
                 {
                     command.CommandText = "SELECT *FROM Usuario WHERE email_usuario=@email;";
-                    command.Parameters.AddWithValue("email", email);
+                    command.Parameters.AddWithValue("@email", email);
                     using var reader = await command.ExecuteReaderAsync();
                     while (await reader.ReadAsync())
                     {

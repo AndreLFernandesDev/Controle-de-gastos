@@ -23,28 +23,16 @@ class Financas
             }
             else if (opcao == 2)
             {
-                var listaUsuarios = await Db.RetornarUsuarios();
-                Console.WriteLine("LISTA DE USUÁRIOS");
-                Console.WriteLine("-----------------");
-                for (int i = 0; i < listaUsuarios.Count; i++)
+                do
                 {
-                    Console.WriteLine(
-                        "Id: {0} - Nome: {1}",
-                        listaUsuarios[i].UsuarioId,
-                        listaUsuarios[i].NomeUsuario
-                    );
-                }
-                Console.WriteLine("");
-                Console.WriteLine("Digite o Id do seu usuário:");
-                int usuarioId = Convert.ToInt32(Console.ReadLine());
-                for (int i = 0; i < listaUsuarios.Count; i++)
-                {
-                    if (listaUsuarios[i].UsuarioId == usuarioId)
+                    Console.WriteLine("Digite o seu email de usuário:");
+                    string email = Console.ReadLine();
+                    UsuarioAtual = await Db.BuscarUsuarioPorEmail(email);
+                    if (UsuarioAtual == null)
                     {
-                        UsuarioAtual = listaUsuarios[i];
-                        break;
+                        Console.WriteLine("Usuário inválido!");
                     }
-                }
+                } while (UsuarioAtual == null);
             }
             else
             {
