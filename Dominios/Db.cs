@@ -72,33 +72,6 @@ namespace Dominios
             return novoUsuario;
         }
 
-        public static async Task<List<Usuario>> RetornarUsuarios()
-        {
-            List<Usuario> ListaUsuarios = new();
-            using var connection = new MySqlConnection(builder.ConnectionString);
-            {
-                await connection.OpenAsync();
-                using var command = connection.CreateCommand();
-                {
-                    command.CommandText = "SELECT *FROM Usuario;";
-                    using var reader = await command.ExecuteReaderAsync();
-                    while (await reader.ReadAsync())
-                    {
-                        Usuario novoUsuario =
-                            new(
-                                reader.GetInt32(0),
-                                reader.GetString(1),
-                                reader.GetString(2),
-                                reader.GetDecimal(3),
-                                reader.GetDecimal(4)
-                            );
-                        ListaUsuarios.Add(novoUsuario);
-                    }
-                }
-                return ListaUsuarios;
-            }
-        }
-
         public static async Task<List<Despesa>> RetornarDespesa(int idUsuario)
         {
             List<Despesa> ListaDespesa = new();
@@ -209,6 +182,56 @@ namespace Dominios
                     command.Parameters.AddWithValue("@situacao", situacao);
                     command.Parameters.AddWithValue("@categoria", categoria);
                     int rowCount = await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        public static async Task<Dictionary<string, decimal>> DivisaoDespesaPorCategoria(int id)
+        {
+            Dictionary<string, decimal> Dict = new();
+            string categoria;
+            decimal soma = 0;
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            {
+                await connection.OpenAsync();
+                using var command = connection.CreateCommand();
+                {
+                    command.CommandText =
+                        "SELECT categoria_despesa, SUM(valor_despesa) AS Total FROM Despesa WHERE id_usuario=@id GROUP BY categoria_despesa ;";
+                    command.Parameters.AddWithValue("@id", id);
+                    using var reader = await command.ExecuteReaderAsync();
+                    while (await reader.ReadAsync())
+                    {
+                        categoria = reader.GetString(0);
+                        soma = reader.GetDecimal(1);
+                        Dict.Add(categoria, soma);
+                    }
+                    return Dict;
+                }
+            }
+        }
+
+        public static async Task<Dictionary<string, decimal>> DivisaoReceitaPorCategoria(int id)
+        {
+            Dictionary<string, decimal> Dict = new();
+            string categoria;
+            decimal soma = 0;
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            {
+                await connection.OpenAsync();
+                using var command = connection.CreateCommand();
+                {
+                    command.CommandText =
+                        "SELECT categoria_receita, SUM(valor_receita) AS Total FROM Receita WHERE id_usuario=@id GROUP BY categoria_receita;";
+                    command.Parameters.AddWithValue("@id", id);
+                    using var reader = await command.ExecuteReaderAsync();
+                    while (await reader.ReadAsync())
+                    {
+                        categoria = reader.GetString(0);
+                        soma = reader.GetDecimal(1);
+                        Dict.Add(categoria, soma);
+                    }
+                    return Dict;
                 }
             }
         }
